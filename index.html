@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kho Ứng Dụng Sáng Tạo</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        .app-card {
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        .app-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05), 0 0 0 1px rgba(139, 92, 246, 0.5);
+        }
+    </style>
+</head>
+<body class="bg-gray-900 text-white">
+    <div class="container mx-auto px-4 py-12">
+        <header class="text-center mb-12">
+            <h1 class="text-4xl md:text-5xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-indigo-500">
+                Kho Ứng Dụng Sáng Tạo
+            </h1>
+            <p class="text-gray-400 mt-4 text-lg">Tổng hợp các công cụ AI do chúng ta cùng nhau xây dựng.</p>
+        </header>
+
+        <main>
+            <!-- App Grid -->
+            <div id="app-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                
+                <!-- App Card 1: AI Image Creator (Existing) -->
+                <div class="app-card bg-gray-800 rounded-2xl shadow-xl overflow-hidden">
+                    <div class="p-6 flex flex-col h-full">
+                        <div class="flex items-center space-x-4 mb-4">
+                            <div class="bg-indigo-500 p-3 rounded-lg">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg>
+                            </div>
+                            <h2 class="text-xl font-bold text-white">Tạo Mô Hình Đồ Chơi</h2>
+                        </div>
+                        <p class="text-gray-400 mb-6 flex-grow">
+                            Tạo ảnh độc đáo từ mô tả và ảnh tham chiếu về đồ chơi, nhân vật.
+                        </p>
+                        <a href="https://g.co/gemini/share/031a9f047091" target="_blank" class="mt-auto w-full text-center block bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 px-4 rounded-lg transition-colors duration-200">
+                            Mở Ứng Dụng
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Card 2: Thay Trang Phục -->
+                <div class="app-card bg-gray-800 rounded-2xl shadow-xl overflow-hidden">
+                    <div class="p-6 flex flex-col h-full">
+                        <div class="flex items-center space-x-4 mb-4">
+                            <div class="bg-pink-500 p-3 rounded-lg">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" /></svg>
+                            </div>
+                            <h2 class="text-xl font-bold text-white">Thay Trang Phục</h2>
+                        </div>
+                        <p class="text-gray-400 mb-6 flex-grow">Thử các loại quần áo, phụ kiện khác nhau cho nhân vật trong ảnh.</p>
+                        <a href="https://gemini.google.com/share/452a50ab8109" target="_blank" class="mt-auto w-full text-center block bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 px-4 rounded-lg transition-colors duration-200">Mở Ứng Dụng</a>
+                    </div>
+                </div>
+
+                <!-- Card 3: Thay Nền -->
+                <div class="app-card bg-gray-800 rounded-2xl shadow-xl overflow-hidden">
+                    <div class="p-6 flex flex-col h-full">
+                        <div class="flex items-center space-x-4 mb-4">
+                             <div class="bg-teal-500 p-3 rounded-lg">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M4 4v16h16V4H4zm8 12l-3-3h6l-3 3zM12 8l3 3H9l3-3z" /></svg>
+                            </div>
+                            <h2 class="text-xl font-bold text-white">Thay Nền</h2>
+                        </div>
+                        <p class="text-gray-400 mb-6 flex-grow">Dễ dàng thay đổi bối cảnh phía sau chủ thể trong ảnh của bạn.</p>
+                         <a href="https://g.co/gemini/share/3f5736ce90b3" target="_blank" class="mt-auto w-full text-center block bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 px-4 rounded-lg transition-colors duration-200">Mở Ứng Dụng</a>
+                    </div>
+                </div>
+                
+                <!-- Card 4: Ảnh Thẻ & Hộ Chiếu -->
+                <div class="app-card bg-gray-800 rounded-2xl shadow-xl overflow-hidden">
+                    <div class="p-6 flex flex-col h-full">
+                        <div class="flex items-center space-x-4 mb-4">
+                            <div class="bg-blue-500 p-3 rounded-lg">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M10 6H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V8a2 2 0 00-2-2h-5m-4 0V5a2 2 0 012-2h4a2 2 0 012 2v1m-4 0h4m-9 11V10a1 1 0 011-1h2a1 1 0 011 1v7m-2-4h2" /></svg>
+                            </div>
+                            <h2 class="text-xl font-bold text-white">Ảnh Thẻ & Hộ Chiếu</h2>
+                        </div>
+                        <p class="text-gray-400 mb-6 flex-grow">Tạo ảnh thẻ và ảnh hộ chiếu đúng tiêu chuẩn một cách nhanh chóng.</p>
+                        <a href="https://g.co/gemini/share/b059aa4fa4f9" target="_blank" class="mt-auto w-full text-center block bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 px-4 rounded-lg transition-colors duration-200">Mở Ứng Dụng</a>
+                    </div>
+                </div>
+
+                <!-- Card 5: Tách Nền -->
+                 <div class="app-card bg-gray-800 rounded-2xl shadow-xl overflow-hidden">
+                    <div class="p-6 flex flex-col h-full">
+                        <div class="flex items-center space-x-4 mb-4">
+                            <div class="bg-red-500 p-3 rounded-lg">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M14.121 14.121L19 19M4.879 4.879L9.757 9.757M14.121 9.879L19 5M4.879 19.121L9.757 14.243" /></svg>
+                            </div>
+                            <h2 class="text-xl font-bold text-white">Tách Nền</h2>
+                        </div>
+                        <p class="text-gray-400 mb-6 flex-grow">Loại bỏ nền khỏi ảnh, giữ lại chủ thể một cách chính xác.</p>
+                        <a href="https://g.co/gemini/share/450d3c527030" target="_blank" class="mt-auto w-full text-center block bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 px-4 rounded-lg transition-colors duration-200">Mở Ứng Dụng</a>
+                    </div>
+                </div>
+
+                <!-- Card 6: Ghép 2 Nhân Vật -->
+                <div class="app-card bg-gray-800 rounded-2xl shadow-xl overflow-hidden">
+                    <div class="p-6 flex flex-col h-full">
+                        <div class="flex items-center space-x-4 mb-4">
+                            <div class="bg-green-500 p-3 rounded-lg">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" /></svg>
+                            </div>
+                            <h2 class="text-xl font-bold text-white">Ghép 2 Nhân Vật</h2>
+                        </div>
+                        <p class="text-gray-400 mb-6 flex-grow">Tạo ra những bức ảnh ghép vui vẻ, sáng tạo từ hai nhân vật khác nhau.</p>
+                        <a href="https://g.co/gemini/share/43c3acf1efb1" target="_blank" class="mt-auto w-full text-center block bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 px-4 rounded-lg transition-colors duration-200">Mở Ứng Dụng</a>
+                    </div>
+                </div>
+
+                <!-- Card 7: Viết Kịch Bản -->
+                 <div class="app-card bg-gray-800 rounded-2xl shadow-xl overflow-hidden">
+                    <div class="p-6 flex flex-col h-full">
+                        <div class="flex items-center space-x-4 mb-4">
+                            <div class="bg-yellow-500 p-3 rounded-lg">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M7 4v16M17 4v16M3 8h4m10 0h4M3 12h18M3 16h4m10 0h4M4 20h16a1 1 0 001-1V5a1 1 0 00-1-1H4a1 1 0 00-1 1v14a1 1 0 001 1z" /></svg>
+                            </div>
+                            <h2 class="text-xl font-bold text-white">Viết Kịch Bản</h2>
+                        </div>
+                        <p class="text-gray-400 mb-6 flex-grow">Trợ lý AI giúp bạn phát triển ý tưởng, viết lời thoại và xây dựng cốt truyện.</p>
+                        <a href="https://g.co/gemini/share/c0a060fd963c" target="_blank" class="mt-auto w-full text-center block bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 px-4 rounded-lg transition-colors duration-200">Mở Ứng Dụng</a>
+                    </div>
+                </div>
+
+                <!-- Card 8: Tạo Truyện Vui -->
+                <div class="app-card bg-gray-800 rounded-2xl shadow-xl overflow-hidden">
+                    <div class="p-6 flex flex-col h-full">
+                        <div class="flex items-center space-x-4 mb-4">
+                            <div class="bg-orange-500 p-3 rounded-lg">
+                               <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M14.828 14.828a4 4 0 01-5.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                            </div>
+                            <h2 class="text-xl font-bold text-white">Tạo Truyện Vui</h2>
+                        </div>
+                        <p class="text-gray-400 mb-6 flex-grow">Kể những câu chuyện hài hước, dí dỏm dựa trên vài gợi ý của bạn.</p>
+                        <a href="https://g.co/gemini/share/db09e8362772" target="_blank" class="mt-auto w-full text-center block bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 px-4 rounded-lg transition-colors duration-200">Mở Ứng Dụng</a>
+                    </div>
+                </div>
+
+                <!-- Card 9: Chỉnh Sửa Ảnh Chụp -->
+                <div class="app-card bg-gray-800 rounded-2xl shadow-xl overflow-hidden">
+                    <div class="p-6 flex flex-col h-full">
+                        <div class="flex items-center space-x-4 mb-4">
+                            <div class="bg-cyan-500 p-3 rounded-lg">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" /></svg>
+                            </div>
+                            <h2 class="text-xl font-bold text-white">Chỉnh Sửa Ảnh Chụp</h2>
+                        </div>
+                        <p class="text-gray-400 mb-6 flex-grow">Nâng cao chất lượng ảnh, chỉnh màu, ánh sáng và các chi tiết khác.</p>
+                         <a href="https://g.co/gemini/share/1144f54b679a" target="_blank" class="mt-auto w-full text-center block bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 px-4 rounded-lg transition-colors duration-200">Mở Ứng Dụng</a>
+                    </div>
+                </div>
+
+                 <!-- Card 10: Tạo Mô Hình Kiểu Mới -->
+                <div class="app-card bg-gray-800 rounded-2xl shadow-xl overflow-hidden">
+                    <div class="p-6 flex flex-col h-full">
+                        <div class="flex items-center space-x-4 mb-4">
+                            <div class="bg-purple-500 p-3 rounded-lg">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M21 15.546c-.523 0-1.046.151-1.5.454a2.704 2.704 0 01-3 0 2.704 2.704 0 00-3 0 2.704 2.704 0 01-3 0 2.704 2.704 0 00-3 0c-.454-.303-.977-.454-1.5-.454V8.454c.523 0 1.046-.151 1.5-.454a2.704 2.704 0 013 0 2.704 2.704 0 003 0 2.704 2.704 0 013 0 2.704 2.704 0 003 0c.454.303.977.454 1.5.454v7.092zM15 21h-6v-2a2 2 0 012-2h2a2 2 0 012 2v2zm-3-4a2 2 0 00-2 2v2h4v-2a2 2 0 00-2-2z" /></svg>
+                            </div>
+                            <h2 class="text-xl font-bold text-white">Tạo Mô Hình Kiểu Mới</h2>
+                        </div>
+                        <p class="text-gray-400 mb-6 flex-grow">Sáng tạo những mẫu đồ chơi độc đáo, chưa từng có từ ý tưởng của bạn.</p>
+                        <a href="https://g.co/gemini/share/d6e4052d7e6a" target="_blank" class="mt-auto w-full text-center block bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 px-4 rounded-lg transition-colors duration-200">Mở Ứng Dụng</a>
+                    </div>
+                </div>
+
+                <!-- Card 11: Sửa Chữa Đồ Chơi -->
+                <div class="app-card bg-gray-800 rounded-2xl shadow-xl overflow-hidden">
+                    <div class="p-6 flex flex-col h-full">
+                        <div class="flex items-center space-x-4 mb-4">
+                           <div class="bg-lime-500 p-3 rounded-lg">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" /></svg>
+                            </div>
+                            <h2 class="text-xl font-bold text-white">Sửa Chữa Đồ Chơi</h2>
+                        </div>
+                        <p class="text-gray-400 mb-6 flex-grow">AI hướng dẫn bạn cách khắc phục, sửa chữa những món đồ chơi bị hỏng.</p>
+                         <a href="https://g.co/gemini/share/18b5ce9a325c" target="_blank" class="mt-auto w-full text-center block bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 px-4 rounded-lg transition-colors duration-200">Mở Ứng Dụng</a>
+                    </div>
+                </div>
+
+            </div>
+        </main>
+    </div>
+</body>
+</html>
+
