@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Tạo Hình Ảnh Từ Mô Tả</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        .loader {
+            border-top-color: #3498db;
+            -webkit-animation: spin 1s linear infinite;
+            animation: spin 1s linear infinite;
+        }
+        @-webkit-keyframes spin {
+            0% { -webkit-transform: rotate(0deg); }
+            100% { -webkit-transform: rotate(360deg); }
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        .fade-in {
+            animation: fadeIn 0.5s ease-in-out;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: scale(0.95); }
+            to { opacity: 1; transform: scale(1); }
+        }
+    </style>
+</head>
+<body class="bg-gray-900 text-white flex items-center justify-center min-h-screen p-4">
+    <div class="w-full max-w-2xl bg-gray-800 rounded-2xl shadow-xl p-6 md:p-8">
+        <div class="text-center mb-6">
+            <h1 class="text-3xl md:text-4xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-indigo-500">AI Tạo Hình Ảnh Từ Mô Tả</h1>
+            <p class="text-gray-400 mt-2">Mô tả ý tưởng và thêm ảnh tham chiếu nếu cần.</p>
+        </div>
+
+        <!-- Input Section -->
+        <div class="space-y-4">
+            <textarea id="prompt-input" rows="4" class="w-full bg-gray-700 border border-gray-600 rounded-lg p-4 text-gray-200 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-shadow duration-300" placeholder="Ví dụ: một người đang lắp ráp mô hình trong một căn phòng công nghệ cao..."></textarea>
+            
+            <!-- Image Upload Section -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <!-- Toy Upload -->
+                <div class="space-y-2">
+                    <label for="toy-upload-btn" class="w-full text-center block bg-gray-600 hover:bg-gray-700 text-white font-medium py-2 px-4 rounded-lg cursor-pointer transition-colors duration-200">
+                        1. Tải Ảnh Đồ Chơi
+                    </label>
+                    <input type="file" id="toy-upload-btn" accept="image/*" class="hidden">
+                    <div id="toy-preview" class="aspect-square bg-gray-700/50 rounded-lg flex items-center justify-center text-gray-500 text-sm font-medium">
+                        Xem trước (Đồ chơi)
+                    </div>
+                </div>
+                <!-- Character Upload -->
+                <div class="space-y-2">
+                    <label for="character-upload-btn" class="w-full text-center block bg-gray-600 hover:bg-gray-700 text-white font-medium py-2 px-4 rounded-lg cursor-pointer transition-colors duration-200">
+                        2. Tải Ảnh Nhân Vật
+                    </label>
+                    <input type="file" id="character-upload-btn" accept="image/*" class="hidden">
+                    <div id="character-preview" class="aspect-square bg-gray-700/50 rounded-lg flex items-center justify-center text-gray-500 text-sm font-medium">
+                        Xem trước (Nhân vật)
+                    </div>
+                </div>
+            </div>
+
+            <button id="generate-btn" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 px-4 rounded-lg transition-transform duration-200 transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-800 focus:ring-indigo-500 disabled:bg-gray-500 disabled:cursor-not-allowed disabled:transform-none">
+                Tạo Hình Ảnh
+            </button>
+        </div>
+
+        <!-- Output Section -->
+        <div id="output-container" class="mt-6">
+            <div id="loader" class="text-center hidden flex-col items-center justify-center space-y-3 p-4">
+                <div class="loader ease-linear rounded-full border-4 border-t-4 border-gray-200 h-12 w-12"></div>
+                <p id="loader-text" class="text-gray-400">Đang vẽ, vui lòng chờ trong giây lát...</p>
+            </div>
+            <div id="error-message" class="text-center text-red-400 hidden p-4 bg-red-900/20 rounded-lg"></div>
+            <div id="image-wrapper" class="w-full aspect-square bg-gray-700/50 rounded-lg mt-4 hidden overflow-hidden border border-gray-700">
+                <img id="generated-image" src="" alt="Hình ảnh do AI tạo ra" class="w-full h-full object-contain">
+            </div>
+             <!-- Download Button -->
+            <a id="download-btn" href="#" class="hidden mt-4 w-full text-center block bg-green-600 hover:bg-green-700 text-white font-medium py-2 px-4 rounded-lg cursor-pointer transition-colors duration-200">
+                Tải Ảnh Về
+            </a>
+        </div>
+    </div>
+
+    <script>
+        const promptInput = document.getElementById('prompt-input');
+        const generateBtn = document.getElementById('generate-btn');
+        const loader = document.getElementById('loader');
+        const loaderText = document.getElementById('loader-text');
+        const imageWrapper = document.getElementById('image-wrapper');
+        const generatedImage = document.getElementById('generated-image');
+        const errorMessage = document.getElementById('error-message');
+        const downloadBtn = document.getElementById('download-btn');
+        
+        const toyUploadBtn = document.getElementById('toy-upload-btn');
+        const characterUploadBtn = document.getElementById('character-upload-btn');
+        const toyPreview = document.getElementById('toy-preview');
+        const characterPreview = document.getElementById('character-preview');
+
+        const apiKey = "AIzaSyC8ZB8uYzXQgVm7-gm362DzafNeRA0VtLM"; // Môi trường sẽ tự động cung cấp API Key
+        let toyImageData = null;
+        let characterImageData = null;
+
+        toyUploadBtn.addEventListener('change', (event) => handleSingleImageUpload(event, 'toy'));
+        characterUploadBtn.addEventListener('change', (event) => handleSingleImageUpload(event, 'character'));
+        generateBtn.addEventListener('click', handleGenerateClick);
+        downloadBtn.addEventListener('click', downloadImage);
+
+        function handleSingleImageUpload(event, type) {
+            const file = event.target.files[0];
+            if (!file || !file.type.startsWith('image/')) return;
+
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                const base64String = e.target.result;
+                const imageData = {
+                    mimeType: file.type,
+                    data: base64String.split(',')[1]
+                };
+
+                const previewContainer = type === 'toy' ? toyPreview : characterPreview;
+                previewContainer.innerHTML = ''; // Clear preview text
+                
+                const img = document.createElement('img');
+                img.src = base64String;
+                img.className = 'w-full h-full object-cover rounded-lg';
+                previewContainer.appendChild(img);
+
+                if (type === 'toy') {
+                    toyImageData = imageData;
+                } else {
+                    characterImageData = imageData;
+                }
+            };
+            reader.readAsDataURL(file);
+        }
+        
+        async function handleGenerateClick() {
+            const promptText = promptInput.value.trim();
+            if (!promptText && !toyImageData && !characterImageData) {
+                 showError("Vui lòng nhập mô tả hoặc tải lên ảnh tham chiếu.");
+                return;
+            }
+            generateImage(promptText);
+        }
+        
+        async function generateImage(promptText, retries = 3, delay = 1000) {
+            setLoading(true, "Đang vẽ...");
+            hideError();
+
+            let finalPrompt = promptText;
+            if (toyImageData || characterImageData) {
+                const userInstruction = `Mô tả cảnh và hành động: "${promptText}". `;
+                let adherenceRule = "";
+
+                if (toyImageData && characterImageData) {
+                    adherenceRule = `
+                        QUY TẮC BẮT BUỘC - MỨC ƯU TIÊN CAO NHẤT:
+                        1.  ĐỐI TƯỢNG 1 (Từ ảnh 1): Là MÔ HÌNH ĐỒ CHƠI. Hãy tái tạo nó một cách chính xác.
+                        2.  ĐỐI TƯỢNG 2 (Từ ảnh 2): Là NHÂN VẬT CHÍNH.
+                        3.  GƯƠNG MẶT LÀ BẤT BIẾN: PHẢI tái tạo lại GƯƠNG MẶT, MÁI TÓC, và NÉT MẶT của NHÂN VẬT CHÍNH từ ảnh thứ hai với độ chính xác tuyệt đối. NGHIÊM CẤM pha trộn, thay đổi, hoặc kết hợp các đặc điểm trên mặt của họ với bất kỳ yếu tố nào khác.
+                        4.  BẢO TOÀN NGOẠI HÌNH: Giữ nguyên QUẦN ÁO và vóc dáng của NHÂN VẬT CHÍNH, trừ khi có mô tả thay đổi cụ thể trong câu lệnh.
+                    `;
+                } else {
+                     adherenceRule = "Đối tượng trong ảnh tham chiếu là chủ thể chính. PHẢI tái tạo lại đối tượng này với độ giống tối đa, đặc biệt là các chi tiết trên khuôn mặt nếu là người.";
+                }
+                
+                finalPrompt = userInstruction + adherenceRule;
+            }
+            
+            const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-image-preview:generateContent?key=${apiKey}`;
+            
+            const parts = [{ text: finalPrompt }];
+            // Đảm bảo đúng thứ tự: Đồ chơi trước, Nhân vật sau
+            if (toyImageData) {
+                parts.push({ inlineData: toyImageData });
+            }
+            if (characterImageData) {
+                parts.push({ inlineData: characterImageData });
+            }
+
+            const payload = {
+                contents: [{ parts: parts }],
+                generationConfig: { responseModalities: ['IMAGE'] },
+            };
+
+            try {
+                const response = await fetch(apiUrl, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+
+                if (!response.ok) {
+                    const errorBody = await response.json().catch(() => ({ error: { message: `HTTP error! status: ${response.status}` } }));
+                    throw new Error(errorBody.error.message);
+                }
+
+                const result = await response.json();
+                const imagePart = result?.candidates?.[0]?.content?.parts?.find(p => p.inlineData);
+                
+                if (imagePart && imagePart.inlineData.data) {
+                    const imageUrl = `data:${imagePart.inlineData.mimeType || 'image/png'};base64,${imagePart.inlineData.data}`;
+                    displayImage(imageUrl);
+                } else {
+                    const finishReason = result?.candidates?.[0]?.finishReason;
+                    const safetyRatings = result?.candidates?.[0]?.safetyRatings;
+                    let errorMessageText = "Không nhận được dữ liệu hình ảnh hợp lệ.";
+                    if (finishReason === 'SAFETY') {
+                        errorMessageText = `Nội dung có thể vi phạm chính sách an toàn. Lý do: ${safetyRatings?.map(r => r.category).join(', ')}`;
+                    } else if(finishReason) {
+                        errorMessageText += ` Lý do: ${finishReason}.`;
+                    }
+                    throw new Error(errorMessageText);
+                }
+            } catch (error) {
+                console.error('Lỗi khi tạo hình ảnh:', error);
+                 if (retries > 0 && (error.message.includes('503') || error.message.toLowerCase().includes('quota'))) {
+                    setTimeout(() => generateImage(promptText, retries - 1, delay * 2), delay);
+                } else {
+                    showError(error.message || "Đã xảy ra lỗi không xác định.");
+                    setLoading(false);
+                }
+            }
+        }
+
+        function setLoading(isLoading, message = "Đang xử lý...") {
+            loaderText.textContent = message;
+            if (isLoading) {
+                loader.classList.remove('hidden');
+                loader.classList.add('flex');
+                imageWrapper.classList.add('hidden');
+                downloadBtn.classList.add('hidden');
+                generateBtn.disabled = true;
+                generateBtn.textContent = 'Đang xử lý...';
+            } else {
+                loader.classList.add('hidden');
+                loader.classList.remove('flex');
+                generateBtn.disabled = false;
+                generateBtn.textContent = 'Tạo Hình Ảnh';
+            }
+        }
+
+        function displayImage(url) {
+            generatedImage.src = url;
+            imageWrapper.classList.remove('hidden');
+            imageWrapper.classList.add('fade-in');
+            downloadBtn.classList.remove('hidden');
+            setLoading(false);
+        }
+
+        function downloadImage(event) {
+            event.preventDefault();
+            const link = document.createElement('a');
+            link.href = generatedImage.src;
+            link.download = `ai-image-${Date.now()}.png`;
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        }
+
+        function showError(message) {
+            errorMessage.textContent = message;
+            errorMessage.classList.remove('hidden');
+        }
+
+        function hideError() {
+            errorMessage.classList.add('hidden');
+        }
+    </script>
+</body>
+</html>
+

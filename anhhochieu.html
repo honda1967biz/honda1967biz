@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI - Trình Tạo Ảnh Thẻ & Hộ Chiếu</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #0d1117;
+            color: #c9d1d9;
+        }
+        .main-container {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 2rem;
+            padding: 1rem 2rem 2rem 2rem;
+            max-width: 1400px;
+            margin: auto;
+        }
+        @media (min-width: 1024px) {
+            .main-container {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+        .card {
+            background-color: #161b22;
+            border: 1px solid #30363d;
+            border-radius: 0.5rem;
+            padding: 1.5rem;
+        }
+        .upload-box {
+            border: 2px dashed #30363d;
+            border-radius: 0.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 2rem;
+            cursor: pointer;
+            transition: all 0.2s ease-in-out;
+            position: relative;
+            overflow: hidden;
+            aspect-ratio: 3 / 4;
+            width: 100%;
+            max-width: 300px;
+            margin: auto;
+        }
+        .upload-box:hover {
+            border-color: #58a6ff;
+            background-color: #1f242c;
+        }
+        .upload-box img.preview {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            z-index: 10;
+        }
+        .btn {
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.5rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease-in-out;
+            border: none;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+        }
+        .btn-primary {
+            background-color: #1a73e8;
+            color: white;
+        }
+        .btn-primary:hover {
+            background-color: #4285f4;
+        }
+        .btn-secondary {
+            background-color: #21262d;
+            color: #c9d1d9;
+            border: 1px solid #30363d;
+        }
+        .btn-secondary:hover {
+            background-color: #30363d;
+            border-color: #8b949e;
+        }
+        .loader {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #58a6ff;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            animation: spin 1s linear infinite;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        .option-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.75rem;
+        }
+        .option-btn {
+            padding: 0.5rem 1rem;
+            border: 1px solid #30363d;
+            border-radius: 9999px;
+            cursor: pointer;
+            background-color: #21262d;
+            transition: all 0.2s ease-in-out;
+        }
+        .option-btn.selected {
+            background-color: #58a6ff;
+            color: #161b22;
+            border-color: #58a6ff;
+            font-weight: 600;
+        }
+        label {
+            display: block;
+            margin-bottom: 0.75rem;
+            font-weight: 500;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container mx-auto p-4">
+        <header class="text-center py-6">
+            <h1 class="text-4xl font-bold text-white">Trình Tạo Ảnh Thẻ & Hộ Chiếu AI</h1>
+            <p class="text-gray-400 mt-2">Tạo ảnh thẻ chuyên nghiệp chỉ trong vài giây.</p>
+        </header>
+
+        <div class="main-container">
+            <!-- Left Panel: Upload and Options -->
+            <div class="card">
+                <h2 class="text-xl font-semibold mb-6 text-white">Thiết Lập</h2>
+                <div class="space-y-6">
+                    <div>
+                        <label>1. Tải Lên Ảnh Chân Dung</label>
+                        <div id="main-image-dropzone" class="upload-box">
+                            <div class="placeholder flex flex-col items-center">
+                                <svg class="w-12 h-12 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 13a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
+                                <p class="mt-2 text-sm text-gray-400">Nhấp hoặc kéo thả ảnh</p>
+                            </div>
+                            <img id="main-image-preview" class="preview hidden" src="" alt="Portrait preview">
+                        </div>
+                        <input type="file" id="main-image-input" class="hidden" accept="image/*">
+                    </div>
+                    
+                    <div>
+                        <label>2. Chọn Trang Phục</label>
+                        <div id="outfit-options" class="option-group">
+                            <button class="option-btn selected" data-outfit="áo sơ mi trắng và vest đen công sở">Vest Đen</button>
+                            <button class="option-btn" data-outfit="áo sơ mi trắng và vest xanh đậm công sở">Vest Xanh</button>
+                            <button class="option-btn" data-outfit="áo sơ mi trắng">Sơ Mi Trắng</button>
+                            <button class="option-btn" data-outfit="giữ nguyên trang phục gốc">Giữ Nguyên</button>
+                        </div>
+                    </div>
+
+                    <div>
+                        <label>3. Chọn Nền</label>
+                        <div id="background-options" class="option-group">
+                            <button class="option-btn selected" data-background="trắng trơn (#FFFFFF)">Nền Trắng</button>
+                            <button class="option-btn" data-background="xanh dương nhạt trơn (#EBF4FF)">Nền Xanh</button>
+                            <button class="option-btn" data-background="xám nhạt trơn (#F0F0F0)">Nền Xám</button>
+                        </div>
+                    </div>
+
+                    <button id="generate-btn" class="btn btn-primary w-full !mt-8">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"></path></svg>
+                        <span>Tạo Ảnh Thẻ</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Right Panel: Result -->
+            <div class="card">
+                <h2 class="text-xl font-semibold mb-6 text-white">Kết Quả</h2>
+                <div id="result-container" class="w-full aspect-[3/4] max-w-[300px] mx-auto bg-black/20 rounded-lg flex items-center justify-center border border-dashed border-gray-600">
+                    <div id="result-placeholder" class="text-center text-gray-500">
+                        <svg class="w-16 h-16 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
+                        <p class="mt-4">Ảnh thẻ sẽ xuất hiện ở đây</p>
+                    </div>
+                    <div id="loader" class="hidden loader"></div>
+                    <img id="result-image" class="hidden w-full h-full object-contain rounded-lg" src="" alt="Generated ID photo">
+                </div>
+                 <div class="flex gap-4 mt-6 max-w-[300px] mx-auto">
+                    <button id="download-btn" class="btn btn-secondary w-full" disabled>
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
+                        <span>Tải Ảnh Xuống</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div id="toast" class="fixed top-5 right-5 bg-red-500 text-white py-2 px-4 rounded-lg shadow-lg hidden transition-opacity duration-300">
+        <p id="toast-message"></p>
+    </div>
+
+    <script type="module">
+        const mainImageDropzone = document.getElementById('main-image-dropzone');
+        const mainImageInput = document.getElementById('main-image-input');
+        const mainImagePreview = document.getElementById('main-image-preview');
+        const generateBtn = document.getElementById('generate-btn');
+        const downloadBtn = document.getElementById('download-btn');
+        const resultContainer = document.getElementById('result-container');
+        const resultPlaceholder = document.getElementById('result-placeholder');
+        const loader = document.getElementById('loader');
+        const resultImage = document.getElementById('result-image');
+        const toast = document.getElementById('toast');
+        const toastMessage = document.getElementById('toast-message');
+
+        let mainImageBase64 = null;
+
+        function showToast(message, duration = 3000) {
+            toastMessage.textContent = message;
+            toast.classList.remove('hidden');
+            setTimeout(() => { toast.classList.add('hidden'); }, duration);
+        }
+
+        mainImageDropzone.addEventListener('click', () => mainImageInput.click());
+        mainImageDropzone.addEventListener('dragover', (e) => e.preventDefault());
+        mainImageDropzone.addEventListener('drop', (e) => {
+            e.preventDefault();
+            if (e.dataTransfer.files.length) handleFile(e.dataTransfer.files[0]);
+        });
+        mainImageInput.addEventListener('change', (e) => { if (e.target.files.length) handleFile(e.target.files[0]); });
+
+        function handleFile(file) {
+            if (!file.type.startsWith('image/')) { showToast("Vui lòng chỉ tải lên tệp hình ảnh."); return; }
+            const reader = new FileReader();
+            reader.onloadend = () => {
+                mainImageBase64 = reader.result.split(',')[1];
+                mainImagePreview.src = reader.result;
+                mainImagePreview.classList.remove('hidden');
+            };
+            reader.readAsDataURL(file);
+        }
+
+        document.querySelectorAll('.option-group').forEach(group => {
+            group.addEventListener('click', (e) => {
+                if (e.target.classList.contains('option-btn')) {
+                    group.querySelectorAll('.option-btn').forEach(btn => btn.classList.remove('selected'));
+                    e.target.classList.add('selected');
+                }
+            });
+        });
+
+        generateBtn.addEventListener('click', async () => {
+            if (!mainImageBase64) {
+                showToast("Vui lòng tải lên ảnh chân dung.");
+                return;
+            }
+            
+            setLoading(true);
+
+            const selectedOutfit = document.querySelector('#outfit-options .selected').dataset.outfit;
+            const selectedBackground = document.querySelector('#background-options .selected').dataset.background;
+
+            let outfitPrompt = `Thay thế trang phục hiện tại bằng ${selectedOutfit}.`;
+            if (selectedOutfit === 'giữ nguyên trang phục gốc') {
+                outfitPrompt = 'Giữ nguyên trang phục gốc.';
+            }
+
+            const userPrompt = `Từ bức ảnh được cung cấp, hãy tạo một bức ảnh thẻ chuyên nghiệp kích thước 3x4. Giữ lại hoàn toàn khuôn mặt và các đặc điểm của người trong ảnh. ${outfitPrompt} Thay thế toàn bộ phông nền phía sau bằng một màu ${selectedBackground}. Bức ảnh cuối cùng phải là một bức ảnh chụp chân dung từ vai trở lên, nhìn thẳng, được căn giữa, phù hợp để làm ảnh thẻ hoặc ảnh hộ chiếu.`;
+            
+            const payload = {
+                contents: [{ 
+                    parts: [
+                        { text: userPrompt },
+                        { inlineData: { mimeType: "image/jpeg", data: mainImageBase64 } }
+                    ] 
+                }],
+                generationConfig: {
+                    responseModalities: ['TEXT', 'IMAGE']
+                },
+            };
+            
+            try {
+                const apiKey = "AIzaSyC8ZB8uYzXQgVm7-gm362DzafNeRA0VtLM";
+                const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-image-preview:generateContent?key=${apiKey}`;
+
+                const response = await fetch(apiUrl, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+
+                if (!response.ok) {
+                    const error = await response.json();
+                    throw new Error(error.error?.message || 'Yêu cầu API thất bại.');
+                }
+                
+                const result = await response.json();
+                const base64Data = result?.candidates?.[0]?.content?.parts?.find(p => p.inlineData)?.inlineData?.data;
+
+                if (!base64Data) {
+                    throw new Error('Không nhận được dữ liệu hình ảnh từ API.');
+                }
+                
+                const imageUrl = `data:image/png;base64,${base64Data}`;
+                resultImage.src = imageUrl;
+                resultImage.classList.remove('hidden');
+                downloadBtn.disabled = false;
+
+            } catch (error) {
+                console.error("Lỗi khi tạo ảnh:", error);
+                showToast(`Đã xảy ra lỗi: ${error.message}`);
+                resultPlaceholder.classList.remove('hidden');
+            } finally {
+                setLoading(false);
+            }
+        });
+        
+        downloadBtn.addEventListener('click', () => {
+            if (resultImage.src && !resultImage.classList.contains('hidden')) {
+                const a = document.createElement('a');
+                a.href = resultImage.src;
+                a.download = 'anh-the-ai.png';
+                a.click();
+            }
+        });
+
+        function setLoading(isLoading) {
+            const btnContent = `
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"></path></svg>
+                <span>Tạo Ảnh Thẻ</span>`;
+            
+            if (isLoading) {
+                generateBtn.disabled = true;
+                generateBtn.innerHTML = `<div class="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div><span>Đang tạo ảnh...</span>`;
+                loader.classList.remove('hidden');
+                resultPlaceholder.classList.add('hidden');
+                resultImage.classList.add('hidden');
+            } else {
+                generateBtn.disabled = false;
+                generateBtn.innerHTML = btnContent;
+                loader.classList.add('hidden');
+            }
+        }
+    </script>
+</body>
+</html>
+

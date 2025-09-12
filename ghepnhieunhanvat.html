@@ -1,0 +1,381 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Trình tạo Nhân vật AI</title>
+    <!-- Tích hợp Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Tích hợp font Inter từ Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: #1e293b; }
+        ::-webkit-scrollbar-thumb { background: #475569; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #64748b; }
+        .loader {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #84cc16;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: scale(0.95); }
+            to { opacity: 1; transform: scale(1); }
+        }
+        .animate-fade-in {
+            animation: fadeIn 0.5s ease-out forwards;
+        }
+    </style>
+</head>
+<body class="bg-slate-900 text-white flex items-center justify-center min-h-screen p-4">
+
+    <div class="container mx-auto max-w-4xl w-full">
+        <header class="text-center mb-8">
+            <h1 class="text-4xl md:text-5xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-lime-400 to-green-500">
+                Trình tạo Nhân vật AI
+            </h1>
+            <p class="text-slate-400 mt-2 text-lg">
+                Biến ý tưởng thành hiện thực. Sẵn sàng để sử dụng và tải về!
+            </p>
+        </header>
+
+        <main>
+            <!-- Khu vực nhập liệu -->
+            <div class="bg-slate-800 p-6 rounded-2xl shadow-2xl shadow-lime-500/10">
+                
+                <div class="mb-4">
+                    <label for="image-upload-btn" class="block mb-2 text-sm font-medium text-slate-300">1. Tải ảnh nhân vật (tùy chọn)</label>
+                    <div class="flex items-center gap-4 flex-wrap">
+                        <input type="file" id="image-upload" class="hidden" accept="image/*" multiple>
+                        <button id="image-upload-btn" class="bg-slate-700 hover:bg-slate-600 text-slate-300 font-medium py-2 px-4 rounded-lg transition flex items-center gap-2">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M4 3a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V5a2 2 0 00-2-2H4zm12 12H4l4-8 3 6 2-4 3 6z" clip-rule="evenodd" /></svg>
+                            Chọn ảnh
+                        </button>
+                        <div id="image-preview-container" class="flex gap-2 flex-wrap"></div>
+                    </div>
+                </div>
+
+                <label for="prompt-input" class="block mb-2 text-sm font-medium text-slate-300">2. Mô tả bối cảnh và tư thế</label>
+                <textarea id="prompt-input" rows="3" class="w-full bg-slate-700 border border-slate-600 text-slate-200 text-sm rounded-lg focus:ring-lime-500 focus:border-lime-500 p-2.5 placeholder-slate-400 transition" placeholder="Ví dụ: đang ngồi quanh đống lửa trại trong một khu rừng vào ban đêm..."></textarea>
+                
+                <div class="mt-4">
+                    <p class="text-sm text-slate-400 mb-2">Hoặc thử một vài ý tưởng:</p>
+                    <div class="flex flex-wrap gap-2">
+                        <button class="example-prompt-btn">Hai hiệp sĩ đấu kiếm trong lâu đài</button>
+                        <button class="example-prompt-btn">Gia đình pháp sư trong thư viện cổ</button>
+                        <button class="example-prompt-btn">Nhóm du hành gia trên sao Hỏa</button>
+                    </div>
+                </div>
+
+                <button id="generate-btn" class="mt-6 w-full bg-lime-600 hover:bg-lime-700 disabled:bg-lime-400 disabled:cursor-not-allowed text-white font-bold py-3 px-4 rounded-lg transition-all duration-300 ease-in-out flex items-center justify-center shadow-lg hover:shadow-lime-500/50">
+                    <svg class="w-5 h-5 mr-2" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M9.813 15.904L9 18.75l-.813-2.846a4.5 4.5 0 00-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 003.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 003.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 00-3.09 3.09z" /></svg>
+                    <span>Tạo ảnh</span>
+                </button>
+            </div>
+
+            <!-- Khu vực hiển thị kết quả -->
+            <div id="result-container" class="mt-8 bg-slate-800 p-6 rounded-2xl min-h-[300px] flex items-center justify-center shadow-inner shadow-slate-900/50">
+                <div id="loader" class="loader hidden"></div>
+                <div id="image-placeholder" class="text-slate-500 text-center">
+                    <svg class="w-16 h-16 mx-auto mb-4 text-slate-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M2.25 15.75l5.159-5.159a2.25 2.25 0 013.182 0l5.159 5.159m-1.5-1.5l1.409-1.409a2.25 2.25 0 013.182 0l2.909 2.909m-18 3.75h16.5a1.5 1.5 0 001.5-1.5V6a1.5 1.5 0 00-1.5-1.5H3.75A1.5 1.5 0 002.25 6v12a1.5 1.5 0 001.5 1.5zm10.5-11.25h.008v.008h-.008V8.25zm.375 0a.375.375 0 11-.75 0 .375.375 0 01.75 0z" /></svg>
+                    <p>Nhân vật của bạn sẽ xuất hiện ở đây.</p>
+                </div>
+                <!-- Vùng chứa ảnh kết quả và nút tải xuống -->
+                <div id="image-wrapper"></div>
+            </div>
+        </main>
+        
+        <footer class="text-center mt-8">
+            <p class="text-sm text-slate-500">Một ứng dụng được tạo bởi AI.</p>
+        </footer>
+    </div>
+
+    <script>
+        // --- PHẦN 1: LẤY CÁC PHẦN TỬ GIAO DIỆN (DOM ELEMENTS) ---
+        const promptInput = document.getElementById('prompt-input');
+        const generateBtn = document.getElementById('generate-btn');
+        const loader = document.getElementById('loader');
+        const imagePlaceholder = document.getElementById('image-placeholder');
+        const imageWrapper = document.getElementById('image-wrapper');
+        const examplePromptButtons = document.querySelectorAll('.example-prompt-btn');
+        const imageUpload = document.getElementById('image-upload');
+        const imageUploadBtn = document.getElementById('image-upload-btn');
+        const imagePreviewContainer = document.getElementById('image-preview-container');
+
+        // --- PHẦN 2: BIẾN TOÀN CỤC VÀ CÀI ĐẶT ---
+        let uploadedImagesBase64 = []; // Mảng lưu trữ các ảnh đã được mã hóa base64
+        const apiKey = "AIzaSyC8ZB8uYzXQgVm7-gm362DzafNeRA0VtLM"; // Canvas sẽ tự động cung cấp API key khi chạy
+
+        // --- PHẦN 3: CÁC HÀM TIỆN ÍCH ---
+
+        /**
+         * Chuyển đổi một đối tượng File (ảnh) sang chuỗi base64.
+         * @param {File} file - Tệp ảnh cần chuyển đổi.
+         * @returns {Promise<Object>} - Một promise chứa dữ liệu base64 và loại mime.
+         */
+        function fileToBase64(file) {
+            return new Promise((resolve, reject) => {
+                const reader = new FileReader();
+                reader.readAsDataURL(file);
+                reader.onload = () => resolve({ data: reader.result.split(',')[1], type: file.type });
+                reader.onerror = error => reject(error);
+            });
+        }
+
+        /**
+         * Hiển thị các ảnh đã chọn dưới dạng ảnh thu nhỏ.
+         */
+        function renderImagePreviews() {
+            imagePreviewContainer.innerHTML = ''; // Xóa các ảnh cũ
+            if (uploadedImagesBase64.length === 0) {
+                 imageUpload.value = ''; // Reset input nếu không còn ảnh
+            }
+            uploadedImagesBase64.forEach((imgData, index) => {
+                const previewWrapper = document.createElement('div');
+                previewWrapper.className = 'w-16 h-16 bg-slate-700 rounded-lg relative overflow-hidden shadow-md';
+                
+                const imgElement = document.createElement('img');
+                imgElement.src = `data:${imgData.type};base64,${imgData.data}`;
+                imgElement.className = 'h-full w-full object-cover';
+                
+                const removeBtn = document.createElement('button');
+                removeBtn.innerHTML = '&times;';
+                removeBtn.title = 'Xóa ảnh này';
+                removeBtn.className = 'absolute top-0 right-0 bg-red-600/80 hover:bg-red-600 text-white rounded-full h-5 w-5 flex items-center justify-center text-xs font-bold transition-transform hover:scale-110';
+                removeBtn.dataset.index = index;
+                
+                removeBtn.addEventListener('click', (e) => {
+                    const indexToRemove = parseInt(e.target.dataset.index);
+                    uploadedImagesBase64.splice(indexToRemove, 1); // Xóa ảnh khỏi mảng
+                    renderImagePreviews(); // Cập nhật lại giao diện
+                });
+
+                previewWrapper.appendChild(imgElement);
+                previewWrapper.appendChild(removeBtn);
+                imagePreviewContainer.appendChild(previewWrapper);
+            });
+        }
+
+        /**
+         * Quản lý trạng thái giao diện khi đang tải hoặc đã tải xong.
+         * @param {boolean} isLoading - Trạng thái tải (true = đang tải).
+         */
+        function setLoading(isLoading) {
+            const btnSpan = generateBtn.querySelector('span');
+            if (isLoading) {
+                generateBtn.disabled = true;
+                if (btnSpan) btnSpan.textContent = 'Đang xử lý...';
+                loader.classList.remove('hidden');
+                imagePlaceholder.classList.add('hidden');
+                imageWrapper.innerHTML = '';
+            } else {
+                generateBtn.disabled = false;
+                if (btnSpan) btnSpan.textContent = 'Tạo ảnh';
+                loader.classList.add('hidden');
+            }
+        }
+        
+        /**
+         * Hiển thị ảnh kết quả và nút tải xuống.
+         * @param {string} imageUrl - URL (dạng base64) của ảnh được tạo.
+         */
+        function displayImage(imageUrl) {
+            imageWrapper.innerHTML = ''; // Xóa kết quả cũ
+            const contentWrapper = document.createElement('div');
+            // Thay đổi thành flex container để xếp ảnh và nút theo chiều dọc
+            contentWrapper.className = 'flex flex-col items-center gap-4';
+
+            const img = document.createElement('img');
+            img.src = imageUrl;
+            img.alt = "Ảnh tạo bởi AI: " + promptInput.value;
+            img.className = 'rounded-lg shadow-lg max-w-full h-auto mx-auto animate-fade-in';
+            
+            // Tạo nút tải xuống luôn hiển thị
+            const downloadBtn = document.createElement('a');
+            downloadBtn.href = imageUrl;
+            downloadBtn.download = `nhan-vat-ai-${Date.now()}.png`; // Tên file độc nhất
+            downloadBtn.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" /></svg><span>Tải ảnh về</span>`;
+            // Cập nhật style để nút luôn nổi bật và dễ nhìn
+            downloadBtn.className = 'bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-6 rounded-lg transition-all duration-300 ease-in-out flex items-center justify-center shadow-lg hover:shadow-green-500/50';
+
+            contentWrapper.appendChild(img);
+            contentWrapper.appendChild(downloadBtn);
+            imageWrapper.appendChild(contentWrapper);
+        }
+
+        /**
+         * Hiển thị thông báo lỗi trên giao diện.
+         * @param {string} message - Nội dung lỗi cần hiển thị.
+         */
+        function displayError(message) {
+            imageWrapper.innerHTML = '';
+            imagePlaceholder.classList.remove('hidden');
+            imagePlaceholder.innerHTML = `<p class="text-red-400 font-medium">${message}</p>`;
+        }
+
+        /**
+         * Gửi yêu cầu đến API với cơ chế thử lại nếu gặp lỗi.
+         * @param {string} url - URL của API.
+         * @param {object} options - Tùy chọn cho lệnh fetch (method, headers, body).
+         * @param {number} retries - Số lần thử lại.
+         * @param {number} delay - Thời gian chờ (ms) giữa các lần thử lại.
+         * @returns {Promise<Response>} - Phản hồi từ server.
+         */
+        async function fetchWithRetry(url, options, retries = 3, delay = 1000) {
+            for (let i = 0; i < retries; i++) {
+                try {
+                    const response = await fetch(url, options);
+                    // Nếu server quá tải, chờ và thử lại
+                    if (response.status === 429) {
+                        await new Promise(resolve => setTimeout(resolve, delay));
+                        delay *= 2; // Tăng thời gian chờ
+                        continue;
+                    }
+                    return response;
+                } catch (error) {
+                    if (i === retries - 1) throw error; // Ném lỗi ở lần thử cuối
+                    await new Promise(resolve => setTimeout(resolve, delay));
+                    delay *= 2;
+                }
+            }
+        }
+
+        // --- PHẦN 4: HÀM LOGIC CHÍNH ---
+
+        /**
+         * Hàm chính để tạo ảnh, được gọi khi nhấn nút "Tạo ảnh".
+         */
+        async function generateImage() {
+            const userPrompt = promptInput.value;
+
+            // Kiểm tra xem người dùng đã nhập mô tả hoặc tải ảnh chưa
+            if (!userPrompt && uploadedImagesBase64.length === 0) {
+                displayError("Vui lòng nhập mô tả hoặc tải ảnh nhân vật lên.");
+                return;
+            }
+
+            setLoading(true);
+
+            let apiUrl, payload;
+            const styleSuffix = ", masterpiece, best quality, high detail, cinematic lighting, 4k, sharp focus";
+
+            // Kịch bản 1: Người dùng có tải ảnh lên (Image-to-Image)
+            if (uploadedImagesBase64.length > 0) {
+                apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-image-preview:generateContent?key=${apiKey}`;
+                
+                // Câu lệnh "tối hậu thư" cho AI, yêu cầu giữ nguyên nhân vật
+                const promptForImage = `**ABSOLUTE RULE: DO NOT CHANGE THE CHARACTERS.** Your primary and most important task is to perfectly replicate the characters from the uploaded images. You MUST preserve their exact faces, hairstyles, clothes, and bodies. Do not alter them in any way. Your second task is to place these perfectly replicated characters into a new scene. **SCENE DESCRIPTION:** ${userPrompt}. The final image must be in this style: ${styleSuffix}. Remember, the 100% accurate replication of the characters is the top priority.`;
+                
+                const parts = [{ text: promptForImage }];
+                uploadedImagesBase64.forEach(imgData => {
+                    parts.push({
+                        inlineData: { mimeType: imgData.type, data: imgData.data }
+                    });
+                });
+                
+                payload = {
+                    contents: [{ parts: parts }],
+                    generationConfig: { responseModalities: ['TEXT', 'IMAGE'] }
+                };
+
+            // Kịch bản 2: Người dùng chỉ nhập văn bản (Text-to-Image)
+            } else {
+                apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/imagen-3.0-generate-002:predict?key=${apiKey}`;
+                const finalPrompt = userPrompt + styleSuffix;
+                payload = {
+                    instances: [{ prompt: finalPrompt }],
+                    parameters: { "sampleCount": 1 }
+                };
+            }
+
+            // Gửi yêu cầu đến API và xử lý kết quả
+            try {
+                const response = await fetchWithRetry(apiUrl, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+
+                if (!response.ok) {
+                    const errorData = await response.json();
+                    throw new Error(errorData.error?.message || `Lỗi từ máy chủ: ${response.status}`);
+                }
+                
+                const result = await response.json();
+                let base64Data = null;
+
+                // Trích xuất dữ liệu ảnh tùy theo API được dùng
+                if (uploadedImagesBase64.length > 0) {
+                    base64Data = result?.candidates?.[0]?.content?.parts?.find(p => p.inlineData)?.inlineData?.data;
+                } else {
+                    base64Data = result.predictions?.[0]?.bytesBase64Encoded;
+                }
+
+                if (base64Data) {
+                    const imageUrl = `data:image/png;base64,${base64Data}`;
+                    displayImage(imageUrl);
+                } else {
+                    throw new Error('Không nhận được dữ liệu hình ảnh hợp lệ. Vui lòng thử lại.');
+                }
+
+            } catch (error) {
+                console.error('Lỗi khi tạo ảnh:', error);
+                displayError(error.message || 'Rất tiếc, đã có lỗi xảy ra.');
+            } finally {
+                setLoading(false); // Luôn tắt loading sau khi hoàn tất
+            }
+        }
+
+        // --- PHẦN 5: GẮN CÁC SỰ KIỆN (EVENT LISTENERS) ---
+
+        // Kích hoạt input file ẩn khi nhấn nút "Chọn ảnh"
+        imageUploadBtn.addEventListener('click', () => imageUpload.click());
+
+        // Xử lý khi người dùng chọn ảnh
+        imageUpload.addEventListener('change', async (event) => {
+            const files = event.target.files;
+            if (!files) return;
+
+            imagePreviewContainer.innerHTML = `<span class="text-slate-400 text-sm">Đang xử lý ${files.length} ảnh...</span>`;
+            
+            try {
+                const imagePromises = Array.from(files).map(file => fileToBase64(file));
+                uploadedImagesBase64 = await Promise.all(imagePromises);
+                renderImagePreviews();
+            } catch (error) {
+                console.error("Lỗi khi chuyển đổi ảnh:", error);
+                displayError('Lỗi khi tải ảnh lên.');
+            }
+        });
+
+        // Gắn sự kiện cho các nút gợi ý
+        examplePromptButtons.forEach(button => {
+            button.classList.add('bg-slate-700', 'hover:bg-slate-600', 'text-slate-300', 'text-sm', 'font-medium', 'py-1.5', 'px-3', 'rounded-full', 'transition');
+            button.addEventListener('click', () => {
+                promptInput.value = button.textContent;
+            });
+        });
+
+        // Gắn sự kiện cho nút "Tạo ảnh"
+        generateBtn.addEventListener('click', generateImage);
+        
+        // Cho phép nhấn Enter trong ô mô tả để tạo ảnh
+        promptInput.addEventListener('keydown', (event) => {
+            if (event.key === 'Enter' && !event.shiftKey) {
+                event.preventDefault(); // Ngăn xuống dòng
+                generateImage();
+            }
+        });
+    </script>
+</body>
+</html>
