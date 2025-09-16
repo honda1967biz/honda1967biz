@@ -1,0 +1,906 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tonerx AI Tools</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #0d1117;
+            color: #c9d1d9;
+        }
+        .preset-btn {
+            background-color: #161b22;
+            border: 1px solid #30363d;
+            color: #c9d1d9;
+            transition: all 0.2s ease-in-out;
+        }
+        .preset-btn:hover {
+            background-color: #30363d;
+            border-color: #58a6ff;
+        }
+        .preset-btn.active {
+            background-color: #58a6ff;
+            color: white;
+            border-color: #58a6ff;
+            box-shadow: 0 0 15px rgba(88, 166, 255, 0.5);
+        }
+        .main-card {
+            background-color: #161b22;
+            border: 1px solid #30363d;
+            border-radius: 0.5rem;
+            padding: 1.5rem;
+        }
+        .upload-box {
+            border: 2px dashed #30363d;
+            background-color: #0d1117;
+        }
+        .upload-box:hover {
+             border-color: #58a6ff;
+        }
+        input[type="checkbox"], select, textarea, .option-btn, input[type="text"] {
+            background-color: #0d1117;
+            border: 1px solid #30363d;
+            border-radius: 0.5rem;
+            padding: 0.5rem;
+            color: #c9d1d9;
+        }
+         input[type="checkbox"] {
+            accent-color: #58a6ff;
+        }
+        select:focus, textarea:focus, input[type="text"]:focus {
+             outline: none;
+            border-color: #58a6ff;
+            box-shadow: 0 0 0 2px rgba(88, 166, 255, 0.2);
+        }
+        .action-btn {
+            background-color: #238636;
+            transition: background-color 0.2s;
+        }
+        .action-btn:hover:not(:disabled) {
+            background-color: #2ea043;
+        }
+        .example-prompt-btn, .suggestion-btn {
+            background-color: #30363d;
+            color: #c9d1d9;
+            font-size: 0.8rem;
+            padding: 0.25rem 0.75rem;
+            border-radius: 9999px;
+            transition: background-color 0.2s;
+        }
+        .example-prompt-btn:hover, .suggestion-btn:hover {
+            background-color: #484f58;
+        }
+        .size-btn {
+            background-color: #30363d;
+            color: #c9d1d9;
+            font-size: 0.8rem;
+            padding: 0.5rem 1rem;
+            border-radius: 0.5rem;
+            border: 1px solid transparent;
+            transition: all 0.2s;
+        }
+        .size-btn.active {
+            border-color: #58a6ff;
+            color: #58a6ff;
+            background-color: rgba(88, 166, 255, 0.1);
+        }
+        .size-btn:hover:not(.active) {
+            background-color: #484f58;
+        }
+        .option-btn {
+             padding: 0.5rem 1rem;
+             border-radius: 9999px;
+             cursor: pointer;
+             transition: all 0.2s ease-in-out;
+        }
+        .option-btn.selected {
+             background-color: #58a6ff;
+             color: #161b22;
+             border-color: #58a6ff;
+             font-weight: 600;
+        }
+        .toast {
+            background-color: #ef4444; /* red-500 */
+            color: white;
+            padding: 0.75rem 1.25rem;
+            border-radius: 0.5rem;
+            box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+            opacity: 0;
+            transform: translateX(100%);
+            transition: all 0.5s ease-in-out;
+            max-width: 300px;
+        }
+        .toast.show {
+            opacity: 1;
+            transform: translateX(0);
+        }
+    </style>
+</head>
+<body class="antialiased p-4">
+
+    <div class="container mx-auto max-w-7xl">
+        <!-- Header -->
+        <header class="flex justify-between items-center p-4 mb-4">
+            <h1 class="text-2xl font-bold text-white tracking-wider">TONERX AI TOOLS</h1>
+            <div>
+                 <span class="text-sm px-3 py-1 bg-slate-700 rounded-md">VI</span>
+            </div>
+        </header>
+
+        <!-- Main Grid -->
+        <div class="grid grid-cols-1 lg:grid-cols-5 gap-4">
+            
+            <!-- Left Panel: Presets -->
+            <div class="lg:col-span-1 main-card">
+                <h2 class="font-semibold mb-4">Chọn một preset để bắt đầu</h2>
+                <div class="grid grid-cols-2 gap-2">
+                    <button data-tool="restore-old-photo" class="preset-btn p-3 rounded-md text-sm font-semibold active">Phục Hồi Ảnh Cũ</button>
+                    <button data-tool="toy-creator" class="preset-btn p-3 rounded-md text-sm font-semibold">Tạo Mô Hình</button>
+                    <button data-tool="character-fusion" class="preset-btn p-3 rounded-md text-sm font-semibold">Ghép 2 Nhân Vật</button>
+                    <button data-tool="change-bg" class="preset-btn p-3 rounded-md text-sm font-semibold">Thay Nền</button>
+                    <button data-tool="change-outfit" class="preset-btn p-3 rounded-md text-sm font-semibold">Thay Trang Phục</button>
+                    <button data-tool="id-photo" class="preset-btn p-3 rounded-md text-sm font-semibold">Làm Ảnh Thẻ</button>
+                    <button data-tool="edit-photo" class="preset-btn p-3 rounded-md text-sm font-semibold">Sửa Ảnh</button>
+                    <button data-tool="color-sync" class="preset-btn p-3 rounded-md text-sm font-semibold">Đồng bộ màu</button>
+                </div>
+            </div>
+
+            <!-- Middle Panel: Workspace -->
+            <div class="lg:col-span-2 main-card">
+                
+                <!-- Restore Old Photo Tool UI -->
+                <div id="restore-old-photo-tool">
+                    <h2 class="text-xl font-bold mb-4">Tải Ảnh Cũ</h2>
+                     <label for="restore-image-input" class="upload-box flex flex-col items-center justify-center p-6 rounded-md cursor-pointer h-48 mb-4">
+                        <div id="restore-image-placeholder" class="text-center">
+                            <svg class="w-10 h-10 mx-auto text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-4-4V7a4 4 0 014-4h10a4 4 0 014 4v5a4 4 0 01-4 4H7z"></path></svg>
+                            <p class="mt-2 text-sm text-gray-400">Nhấp hoặc kéo thả để tải lên</p>
+                        </div>
+                        <img id="restore-image-preview" class="hidden h-full object-contain" src="">
+                    </label>
+                    <input type="file" id="restore-image-input" class="hidden" accept="image/*">
+                    <h2 class="text-lg font-bold mb-4">Tùy chọn</h2>
+                    <div class="flex items-center space-x-6 my-4">
+                        <label class="flex items-center space-x-2 cursor-pointer">
+                            <input type="checkbox" id="restore-details-check" class="h-5 w-5 rounded">
+                            <span>Khôi phục chi tiết</span>
+                        </label>
+                         <label class="flex items-center space-x-2 cursor-pointer">
+                            <input type="checkbox" id="colorize-check" class="h-5 w-5 rounded">
+                            <span>Tô lại màu</span>
+                        </label>
+                    </div>
+                    <div>
+                        <label for="restore-prompt-input" class="block font-medium mb-2">Prompt Tùy chọn</label>
+                        <textarea id="restore-prompt-input" rows="3" class="w-full" placeholder="Thêm chi tiết tại đây..."></textarea>
+                    </div>
+                </div>
+
+                <!-- Toy Creator Tool UI -->
+                <div id="toy-creator-tool" class="hidden">
+                    <div class="mb-4">
+                        <label class="block mb-2 font-medium">1. Tải ảnh tham chiếu</label>
+                        <div class="flex items-center gap-4 flex-wrap">
+                            <input type="file" id="toy-image-input" class="hidden" accept="image/*" multiple>
+                            <button id="toy-image-upload-btn" class="bg-slate-700 hover:bg-slate-600 text-slate-300 font-medium py-2 px-4 rounded-lg transition flex items-center gap-2">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M4 3a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V5a2 2 0 00-2-2H4zm12 12H4l4-8 3 6 2-4 3 6z" clip-rule="evenodd" /></svg>
+                                Chọn ảnh
+                            </button>
+                            <div id="toy-image-preview-container" class="flex gap-2 flex-wrap"></div>
+                        </div>
+                    </div>
+                    <div class="mb-4">
+                        <label for="character-prompt-input" class="block font-medium mb-2">2. Mô tả tư thế của mô hình</label>
+                        <textarea id="character-prompt-input" rows="2" class="w-full" placeholder="Ví dụ: đứng thẳng, một tay chống hông..."></textarea>
+                    </div>
+                    <div class="mb-4">
+                        <label for="background-prompt-input" class="block font-medium mb-2">3. Mô tả bối cảnh</label>
+                        <textarea id="background-prompt-input" rows="2" class="w-full" placeholder="Bỏ trống để dùng bối cảnh 'bàn làm việc của nhà thiết kế'"></textarea>
+                    </div>
+                    <div class="mb-4">
+                        <label class="block mb-2 font-medium">4. Tùy chọn Kích thước</label>
+                        <div class="flex flex-wrap gap-2" id="toy-creator-size-options">
+                            <button class="size-btn active" data-size="1:1">Vuông (1:1)</button>
+                            <button class="size-btn" data-size="16:9">Ngang (16:9)</button>
+                            <button class="size-btn" data-size="4:3">Ngang (4:3)</button>
+                            <button class="size-btn" data-size="9:16">Dọc (9:16)</button>
+                            <button class="size-btn" data-size="3:4">Dọc (3:4)</button>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Character Fusion Tool UI -->
+                <div id="character-fusion-tool" class="hidden">
+                     <div class="mb-4">
+                        <label for="fusion-image-upload-btn" class="block mb-2 font-medium">1. Tải ảnh nhân vật (tùy chọn)</label>
+                        <div class="flex items-center gap-4 flex-wrap">
+                            <input type="file" id="fusion-image-input" class="hidden" accept="image/*" multiple>
+                            <button id="fusion-image-upload-btn" class="bg-slate-700 hover:bg-slate-600 text-slate-300 font-medium py-2 px-4 rounded-lg transition flex items-center gap-2">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M4 3a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V5a2 2 0 00-2-2H4zm12 12H4l4-8 3 6 2-4 3 6z" clip-rule="evenodd" /></svg>
+                                Chọn ảnh
+                            </button>
+                            <div id="fusion-image-preview-container" class="flex gap-2 flex-wrap"></div>
+                        </div>
+                    </div>
+                    <div class="mb-4">
+                        <label for="fusion-prompt-input" class="block mb-2 font-medium">2. Mô tả bối cảnh và tư thế</label>
+                        <textarea id="fusion-prompt-input" rows="3" class="w-full" placeholder="Ví dụ: đang ngồi quanh đống lửa trại trong một khu rừng vào ban đêm..."></textarea>
+                    </div>
+                    <div class="mb-4">
+                        <label class="block mb-2 font-medium">3. Tùy chọn Kích thước</label>
+                        <div class="flex flex-wrap gap-2" id="fusion-size-options">
+                            <button class="size-btn active" data-size="1:1">Vuông (1:1)</button>
+                            <button class="size-btn" data-size="16:9">Ngang (16:9)</button>
+                            <button class="size-btn" data-size="4:3">Ngang (4:3)</button>
+                            <button class="size-btn" data-size="9:16">Dọc (9:16)</button>
+                            <button class="size-btn" data-size="3:4">Dọc (3:4)</button>
+                        </div>
+                    </div>
+                    <div>
+                        <p class="text-sm text-slate-400 mb-2">Hoặc thử một vài ý tưởng:</p>
+                        <div class="flex flex-wrap gap-2">
+                            <button class="example-prompt-btn" data-target="fusion-prompt-input">Hai hiệp sĩ đấu kiếm trong lâu đài</button>
+                            <button class="example-prompt-btn" data-target="fusion-prompt-input">Gia đình pháp sư trong thư viện cổ</button>
+                            <button class="example-prompt-btn" data-target="fusion-prompt-input">Nhóm du hành gia trên sao Hỏa</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Change Background Tool UI -->
+                <div id="change-bg-tool" class="hidden space-y-4">
+                     <div>
+                        <label class="block mb-2 font-medium">Ảnh Gốc</label>
+                        <label for="bg-main-image-input" class="upload-box flex flex-col items-center justify-center p-6 rounded-md cursor-pointer h-36">
+                            <div id="bg-main-image-placeholder" class="text-center">
+                                <svg class="w-10 h-10 mx-auto text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
+                                <p class="mt-2 text-sm text-gray-400">Tải ảnh có chủ thể cần tách</p>
+                            </div>
+                            <img id="bg-main-image-preview" class="hidden h-full object-contain" src="">
+                        </label>
+                        <input type="file" id="bg-main-image-input" class="hidden" accept="image/*">
+                    </div>
+                    <div>
+                        <label class="block mb-2 font-medium">Nền Tham Chiếu (tùy chọn)</label>
+                        <label for="bg-ref-image-input" class="upload-box flex flex-col items-center justify-center p-6 rounded-md cursor-pointer h-36">
+                            <div id="bg-ref-image-placeholder" class="text-center">
+                                <svg class="w-10 h-10 mx-auto text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
+                                <p class="mt-2 text-sm text-gray-400">Tải ảnh nền bạn muốn ghép vào</p>
+                            </div>
+                            <img id="bg-ref-image-preview" class="hidden h-full object-contain" src="">
+                        </label>
+                        <input type="file" id="bg-ref-image-input" class="hidden" accept="image/*">
+                    </div>
+                     <div class="pt-2">
+                        <label for="bg-prompt-input" class="block font-medium mb-2">Mô Tả Nền Mới (tùy chọn)</label>
+                        <textarea id="bg-prompt-input" rows="2" class="w-full" placeholder="Ví dụ: một bãi biển nhiệt đới với cát trắng..."></textarea>
+                    </div>
+                    <div>
+                        <label class="flex items-center space-x-2 cursor-pointer">
+                            <input type="checkbox" id="bg-color-sync-check" class="h-5 w-5 rounded" checked>
+                            <span>Đồng bộ màu (Chủ thể & Nền)</span>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Change Outfit Tool UI -->
+                <div id="change-outfit-tool" class="hidden space-y-4">
+                     <div>
+                        <label class="block mb-2 font-medium">Ảnh Nhân Vật Chính</label>
+                        <label for="outfit-main-image-input" class="upload-box flex flex-col items-center justify-center p-6 rounded-md cursor-pointer h-36">
+                            <div id="outfit-main-image-placeholder" class="text-center">
+                                <svg class="w-10 h-10 mx-auto text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path></svg>
+                                <p class="mt-2 text-sm text-gray-400">Tải ảnh người mẫu</p>
+                            </div>
+                            <img id="outfit-main-image-preview" class="hidden h-full object-contain" src="">
+                        </label>
+                        <input type="file" id="outfit-main-image-input" class="hidden" accept="image/*">
+                    </div>
+                    <div>
+                        <label class="block mb-2 font-medium">Ảnh Trang Phục & Phụ Kiện (tùy chọn)</label>
+                        <label for="outfit-ref-image-input" class="upload-box flex flex-col items-center justify-center p-6 rounded-md cursor-pointer h-36">
+                            <div id="outfit-ref-image-placeholder" class="text-center">
+                                <svg class="w-10 h-10 mx-auto text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"></path></svg>
+                                <p class="mt-2 text-sm text-gray-400">Tải ảnh quần áo</p>
+                            </div>
+                            <img id="outfit-ref-image-preview" class="hidden h-full object-contain" src="">
+                        </label>
+                        <input type="file" id="outfit-ref-image-input" class="hidden" accept="image/*">
+                    </div>
+                     <div class="pt-2">
+                        <label for="outfit-prompt-input" class="block font-medium mb-2">Mô Tả Bối Cảnh (tùy chọn)</label>
+                        <textarea id="outfit-prompt-input" rows="2" class="w-full" placeholder="Ví dụ: đứng trên phố đi bộ Nguyễn Huệ..."></textarea>
+                    </div>
+                </div>
+
+                <!-- ID Photo Tool UI -->
+                <div id="id-photo-tool" class="hidden space-y-4">
+                    <div>
+                        <label class="block mb-2 font-medium">1. Tải Lên Ảnh Chân Dung</label>
+                        <label for="id-photo-image-input" class="upload-box flex flex-col items-center justify-center p-6 rounded-md cursor-pointer h-48">
+                            <div id="id-photo-image-placeholder" class="text-center">
+                                <svg class="w-10 h-10 mx-auto text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 13a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
+                                <p class="mt-2 text-sm text-gray-400">Tải ảnh chân dung</p>
+                            </div>
+                            <img id="id-photo-image-preview" class="hidden h-full object-contain" src="">
+                        </label>
+                        <input type="file" id="id-photo-image-input" class="hidden" accept="image/*">
+                    </div>
+                     <div>
+                        <label for="id-photo-outfit-prompt" class="block mb-2 font-medium">2. Mô tả trang phục (bỏ trống để giữ nguyên)</label>
+                        <textarea id="id-photo-outfit-prompt" rows="2" class="w-full" placeholder="Ví dụ: áo sơ mi trắng và vest đen công sở..."></textarea>
+                    </div>
+                    <div>
+                        <label class="block mb-2 font-medium">3. Chọn Nền</label>
+                        <div id="id-photo-background-options" class="flex flex-wrap gap-2">
+                            <button class="option-btn selected" data-background="trắng trơn (#FFFFFF)">Nền Trắng</button>
+                            <button class="option-btn" data-background="xanh dương nhạt trơn (#EBF4FF)">Nền Xanh</button>
+                            <button class="option-btn" data-background="xám nhạt trơn (#F0F0F0)">Nền Xám</button>
+                        </div>
+                    </div>
+                    <div>
+                        <label class="block mb-2 font-medium">4. Chọn Kích Thước</label>
+                        <div id="id-photo-size-options" class="flex flex-wrap gap-2">
+                             <button class="size-btn" data-size="2:3">2x3</button>
+                            <button class="size-btn active" data-size="3:4">3x4</button>
+                            <button class="size-btn" data-size="4:6">4x6</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Edit Photo Tool UI -->
+                <div id="edit-photo-tool" class="hidden space-y-4">
+                    <div>
+                        <label class="block mb-2 font-medium">1. Tải ảnh gốc</label>
+                         <label for="edit-photo-image-input" class="upload-box flex flex-col items-center justify-center p-6 rounded-md cursor-pointer h-48">
+                            <div id="edit-photo-image-placeholder" class="text-center">
+                                <svg class="w-10 h-10 mx-auto text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path></svg>
+                                <p class="mt-2 text-sm text-gray-400">Tải ảnh cần sửa</p>
+                            </div>
+                            <img id="edit-photo-image-preview" class="hidden h-full object-contain" src="">
+                        </label>
+                        <input type="file" id="edit-photo-image-input" class="hidden" accept="image/*">
+                    </div>
+                     <div>
+                        <label for="edit-photo-command-input" class="block mb-2 font-medium">2. Nhập yêu cầu chỉnh sửa</label>
+                        <input type="text" id="edit-photo-command-input" class="w-full" placeholder="Ví dụ: làm da trắng hồng, mịn màng">
+                    </div>
+                    <div>
+                        <p class="text-sm text-slate-400 mb-2">Hoặc thử một vài gợi ý:</p>
+                        <div class="flex flex-wrap gap-2">
+                            <button class="suggestion-btn" data-command="làm da trắng hồng, rạng rỡ">Trắng hồng</button>
+                            <button class="suggestion-btn" data-command="phong cách trong trẻo, tự nhiên, ánh sáng dịu">Trong trẻo</button>
+                            <button class="suggestion-btn" data-command="tông màu vintage, hoài cổ, có chút nhiễu hạt">Vintage</button>
+                            <button class="suggestion-btn" data-command="làm da mịn màng, xóa các khuyết điểm nhỏ">Làm mịn da</button>
+                        </div>
+                    </div>
+                    <div class="border-t border-slate-700 my-4"></div>
+                    <div>
+                        <label class="block mb-2 font-medium">Hoặc thử tác vụ nhanh:</label>
+                        <button id="edit-photo-remove-bg-btn" class="w-full p-3 rounded-md text-white font-bold bg-indigo-600 hover:bg-indigo-700 transition flex items-center justify-center gap-2">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                              <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM7 9a1 1 0 000 2h6a1 1 0 100-2H7z" clip-rule="evenodd" />
+                            </svg>
+                            Tách Nền Ảnh Này
+                        </button>
+                    </div>
+                </div>
+
+
+                 <!-- Placeholder for other tools -->
+                 <div id="other-tools-placeholder" class="hidden flex items-center justify-center h-full text-gray-500">
+                    <p>Công cụ này sẽ sớm được cập nhật!</p>
+                 </div>
+
+                <button id="apply-btn" class="action-btn w-full p-3 mt-6 rounded-md text-white font-bold">Áp Dụng Preset</button>
+            </div>
+
+            <!-- Right Panel: Output -->
+            <div class="lg:col-span-2 main-card">
+                <h2 class="text-xl font-bold mb-4">Ảnh Đã Tạo</h2>
+                <div class="w-full aspect-square bg-black/20 rounded-md flex items-center justify-center border border-dashed border-gray-600">
+                     <p id="result-placeholder" class="text-gray-500 text-center text-sm">Ảnh được tạo sẽ hiện thị ở đây sau khi hoàn tất.</p>
+                     <div id="loader" class="hidden">
+                        <div class="w-10 h-10 border-4 border-white border-t-blue-500 rounded-full animate-spin"></div>
+                    </div>
+                    <img id="result-image" class="hidden w-full h-full object-contain rounded-md" src="">
+                </div>
+                <button id="download-btn" class="w-full p-3 mt-4 rounded-md text-white font-bold bg-sky-600 hover:not(:disabled):bg-sky-700 transition disabled:opacity-50 disabled:cursor-not-allowed" disabled>
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 inline-block mr-2" viewBox="0 0 20 20" fill="currentColor">
+                      <path fill-rule="evenodd" d="M3 17a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm3.293-7.707a1 1 0 011.414 0L9 10.586V3a1 1 0 112 0v7.586l1.293-1.293a1 1 0 111.414 1.414l-3 3a1 1 0 01-1.414 0l-3-3a1 1 0 010-1.414z" clip-rule="evenodd" />
+                    </svg>
+                    Tải Về
+                </button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Toast Notification Container -->
+    <div id="toast-container" class="fixed top-5 right-5 z-50 flex flex-col items-end gap-2"></div>
+
+<script>
+    // --- STATE MANAGEMENT ---
+    let activeTool = 'restore-old-photo';
+    let uploadedImagesBase64 = []; 
+    let changeBgMainImage = null;    
+    let changeBgRefImage = null;     
+    let changeOutfitMainImage = null;
+    let changeOutfitRefImage = null;
+    let idPhotoImage = null;
+    let editPhotoImage = null;
+    let selectedAspectRatio = '1:1';
+
+    // --- DOM Elements ---
+    const presetButtons = document.querySelectorAll('.preset-btn');
+    const applyBtn = document.getElementById('apply-btn');
+    const downloadBtn = document.getElementById('download-btn');
+    const resultPlaceholder = document.getElementById('result-placeholder');
+    const loader = document.getElementById('loader');
+    const resultImage = document.getElementById('result-image');
+    const toastContainer = document.getElementById('toast-container');
+    
+    // Tool UI Containers
+    const toolContainers = {
+        'restore-old-photo': document.getElementById('restore-old-photo-tool'),
+        'toy-creator': document.getElementById('toy-creator-tool'),
+        'character-fusion': document.getElementById('character-fusion-tool'),
+        'change-bg': document.getElementById('change-bg-tool'),
+        'change-outfit': document.getElementById('change-outfit-tool'),
+        'id-photo': document.getElementById('id-photo-tool'),
+        'edit-photo': document.getElementById('edit-photo-tool'),
+        'other': document.getElementById('other-tools-placeholder')
+    };
+
+    // Restore Tool Elements
+    const restoreImageInput = document.getElementById('restore-image-input');
+    const restoreImagePreview = document.getElementById('restore-image-preview');
+    const restoreImagePlaceholder = document.getElementById('restore-image-placeholder');
+
+    // Toy Creator Tool Elements
+    const toyImageInput = document.getElementById('toy-image-input');
+    const toyImageUploadBtn = document.getElementById('toy-image-upload-btn');
+    const toyImagePreviewContainer = document.getElementById('toy-image-preview-container');
+    const toyCreatorSizeOptions = document.getElementById('toy-creator-size-options');
+
+    // Character Fusion Tool Elements
+    const fusionImageInput = document.getElementById('fusion-image-input');
+    const fusionImageUploadBtn = document.getElementById('fusion-image-upload-btn');
+    const fusionImagePreviewContainer = document.getElementById('fusion-image-preview-container');
+    const fusionPromptInput = document.getElementById('fusion-prompt-input');
+    const fusionSizeOptions = document.getElementById('fusion-size-options');
+
+    // Change Background Tool Elements
+    const bgMainImageInput = document.getElementById('bg-main-image-input');
+    const bgMainImagePreview = document.getElementById('bg-main-image-preview');
+    const bgMainImagePlaceholder = document.getElementById('bg-main-image-placeholder');
+    const bgRefImageInput = document.getElementById('bg-ref-image-input');
+    const bgRefImagePreview = document.getElementById('bg-ref-image-preview');
+    const bgRefImagePlaceholder = document.getElementById('bg-ref-image-placeholder');
+    const bgPromptInput = document.getElementById('bg-prompt-input');
+    const bgColorSyncCheck = document.getElementById('bg-color-sync-check');
+
+    // Change Outfit Tool Elements
+    const outfitMainImageInput = document.getElementById('outfit-main-image-input');
+    const outfitMainImagePreview = document.getElementById('outfit-main-image-preview');
+    const outfitMainImagePlaceholder = document.getElementById('outfit-main-image-placeholder');
+    const outfitRefImageInput = document.getElementById('outfit-ref-image-input');
+    const outfitRefImagePreview = document.getElementById('outfit-ref-image-preview');
+    const outfitRefImagePlaceholder = document.getElementById('outfit-ref-image-placeholder');
+    const outfitPromptInput = document.getElementById('outfit-prompt-input');
+
+    // ID Photo Tool Elements
+    const idPhotoImageInput = document.getElementById('id-photo-image-input');
+    const idPhotoImagePreview = document.getElementById('id-photo-image-preview');
+    const idPhotoImagePlaceholder = document.getElementById('id-photo-image-placeholder');
+    const idPhotoOutfitPrompt = document.getElementById('id-photo-outfit-prompt');
+    const idPhotoBackgroundOptions = document.getElementById('id-photo-background-options');
+    const idPhotoSizeOptions = document.getElementById('id-photo-size-options');
+    
+    // Edit Photo Tool Elements
+    const editPhotoImageInput = document.getElementById('edit-photo-image-input');
+    const editPhotoImagePreview = document.getElementById('edit-photo-image-preview');
+    const editPhotoImagePlaceholder = document.getElementById('edit-photo-image-placeholder');
+    const editPhotoCommandInput = document.getElementById('edit-photo-command-input');
+    const editPhotoSuggestionBtns = document.querySelectorAll('#edit-photo-tool .suggestion-btn');
+    const editPhotoRemoveBgBtn = document.getElementById('edit-photo-remove-bg-btn');
+
+
+    // --- Toast Notification Function ---
+    function showToast(message, type = 'error') {
+        const toast = document.createElement('div');
+        toast.className = 'toast';
+        const colors = { error: '#ef4444', success: '#22c55e', info: '#3b82f6' };
+        toast.style.backgroundColor = colors[type] || colors.error;
+        toast.textContent = message;
+        toastContainer.appendChild(toast);
+        setTimeout(() => toast.classList.add('show'), 10);
+        setTimeout(() => {
+            toast.classList.remove('show');
+            toast.addEventListener('transitionend', () => toast.remove());
+        }, 4000);
+    }
+
+    // --- Tool Switching Logic ---
+    presetButtons.forEach(button => {
+        button.addEventListener('click', () => {
+            presetButtons.forEach(btn => btn.classList.remove('active'));
+            button.classList.add('active');
+            activeTool = button.dataset.tool;
+            // Reset state variables
+            uploadedImagesBase64 = [];
+            changeBgMainImage = null;
+            changeBgRefImage = null;
+            changeOutfitMainImage = null;
+            changeOutfitRefImage = null;
+            idPhotoImage = null;
+            editPhotoImage = null;
+            selectedAspectRatio = '1:1';
+            updateWorkspaceUI();
+        });
+    });
+
+    function updateWorkspaceUI() {
+        Object.values(toolContainers).forEach(container => container.classList.add('hidden'));
+
+        const activeContainer = toolContainers[activeTool] || toolContainers['other'];
+        activeContainer.classList.remove('hidden');
+
+        const resetSizeButtons = (container) => {
+            if (!container) return;
+            const buttons = container.querySelectorAll('.size-btn');
+            let defaultSet = false;
+            buttons.forEach((btn) => {
+                 if(btn.dataset.size === '3:4' && activeTool === 'id-photo'){
+                     btn.classList.add('active');
+                     defaultSet = true;
+                 } else {
+                    btn.classList.remove('active');
+                 }
+            });
+            if(!defaultSet && buttons.length > 0) {
+                 buttons[0].classList.add('active');
+                 selectedAspectRatio = buttons[0].dataset.size;
+            }
+        };
+        
+        if (activeTool === 'toy-creator') resetSizeButtons(toyCreatorSizeOptions);
+        if (activeTool === 'character-fusion') resetSizeButtons(fusionSizeOptions);
+        if (activeTool === 'id-photo') resetSizeButtons(idPhotoSizeOptions);
+
+    }
+
+    // --- Universal Helper Functions ---
+    function fileToBase64(file) {
+        return new Promise((resolve, reject) => {
+            const reader = new FileReader();
+            reader.readAsDataURL(file);
+            reader.onload = () => resolve({ data: reader.result.split(',')[1], type: file.type });
+            reader.onerror = error => reject(error);
+        });
+    }
+    
+    // --- Single Image Upload Handler ---
+    async function handleSingleImageUpload(event, previewEl, placeholderEl, stateUpdater) {
+         const file = event.target.files[0];
+        if (file) {
+            try {
+                const imageObject = await fileToBase64(file);
+                previewEl.src = `data:${imageObject.type};base64,${imageObject.data}`;
+                previewEl.classList.remove('hidden');
+                placeholderEl.classList.add('hidden');
+                stateUpdater(imageObject);
+            } catch (error) {
+                console.error("Error converting file:", error);
+                showToast("Lỗi khi tải ảnh lên.");
+            }
+        }
+    }
+    
+    restoreImageInput.addEventListener('change', (e) => handleSingleImageUpload(e, restoreImagePreview, restoreImagePlaceholder, (imgObj) => uploadedImagesBase64 = [imgObj]));
+    bgMainImageInput.addEventListener('change', (e) => handleSingleImageUpload(e, bgMainImagePreview, bgMainImagePlaceholder, (imgObj) => changeBgMainImage = imgObj));
+    bgRefImageInput.addEventListener('change', (e) => handleSingleImageUpload(e, bgRefImagePreview, bgRefImagePlaceholder, (imgObj) => changeBgRefImage = imgObj));
+    outfitMainImageInput.addEventListener('change', (e) => handleSingleImageUpload(e, outfitMainImagePreview, outfitMainImagePlaceholder, (imgObj) => changeOutfitMainImage = imgObj));
+    outfitRefImageInput.addEventListener('change', (e) => handleSingleImageUpload(e, outfitRefImagePreview, outfitRefImagePlaceholder, (imgObj) => changeOutfitRefImage = imgObj));
+    idPhotoImageInput.addEventListener('change', (e) => handleSingleImageUpload(e, idPhotoImagePreview, idPhotoImagePlaceholder, (imgObj) => idPhotoImage = imgObj));
+    editPhotoImageInput.addEventListener('change', (e) => handleSingleImageUpload(e, editPhotoImagePreview, editPhotoImagePlaceholder, (imgObj) => editPhotoImage = imgObj));
+
+
+    // --- Multiple Image Upload Logic ---
+    toyImageUploadBtn.addEventListener('click', () => toyImageInput.click());
+    fusionImageUploadBtn.addEventListener('click', () => fusionImageInput.click());
+
+    async function handleMultipleImageUpload(event, container) {
+        const files = event.target.files;
+        if (!files || files.length === 0) return;
+        container.innerHTML = `<span class="text-slate-400 text-sm">Đang xử lý ${files.length} ảnh...</span>`;
+        try {
+            const imagePromises = Array.from(files).map(file => fileToBase64(file));
+            uploadedImagesBase64 = await Promise.all(imagePromises);
+            renderMultipleImagePreviews(container);
+        } catch (error) {
+            console.error("Lỗi khi chuyển đổi ảnh:", error);
+            container.innerHTML = `<span class="text-red-400 text-sm">Lỗi khi tải ảnh lên.</span>`;
+        }
+    }
+
+    toyImageInput.addEventListener('change', (e) => handleMultipleImageUpload(e, toyImagePreviewContainer));
+    fusionImageInput.addEventListener('change', (e) => handleMultipleImageUpload(e, fusionImagePreviewContainer));
+
+    function renderMultipleImagePreviews(container) {
+        container.innerHTML = '';
+        if (uploadedImagesBase64.length === 0) {
+            if(container.id.includes('toy')) toyImageInput.value = '';
+            if(container.id.includes('fusion')) fusionImageInput.value = '';
+        }
+        uploadedImagesBase64.forEach((imgData, index) => {
+            const previewWrapper = document.createElement('div');
+            previewWrapper.className = 'w-16 h-16 bg-slate-700 rounded-lg relative overflow-hidden shadow-md';
+            const imgElement = document.createElement('img');
+            imgElement.src = `data:${imgData.type};base64,${imgData.data}`;
+            imgElement.className = 'h-full w-full object-cover';
+            const removeBtn = document.createElement('button');
+            removeBtn.innerHTML = '&times;';
+            removeBtn.className = 'absolute top-0 right-0 bg-red-600/80 hover:bg-red-600 text-white rounded-full h-5 w-5 flex items-center justify-center text-xs font-bold transition-transform hover:scale-110';
+            removeBtn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                uploadedImagesBase64.splice(index, 1);
+                renderMultipleImagePreviews(container);
+            });
+            previewWrapper.append(imgElement, removeBtn);
+            container.appendChild(previewWrapper);
+        });
+    }
+    
+    // --- UI Interaction Logic ---
+    document.querySelectorAll('.example-prompt-btn').forEach(button => {
+        button.addEventListener('click', () => {
+            const targetInput = document.getElementById(button.dataset.target);
+            if (targetInput) targetInput.value = button.textContent;
+        });
+    });
+    
+    editPhotoSuggestionBtns.forEach(btn => {
+        btn.addEventListener('click', () => {
+            editPhotoCommandInput.value = btn.dataset.command;
+        });
+    });
+
+    editPhotoRemoveBgBtn.addEventListener('click', () => {
+        if (!editPhotoImage) {
+            return showToast("Vui lòng tải ảnh lên trước khi tách nền.");
+        }
+        const removeBgPrompt = "Please remove the background from this image, leaving only the main subject. The new background must be transparent.";
+        generate(removeBgPrompt, [editPhotoImage], '1:1');
+    });
+
+    const setupSizeButtons = (container) => {
+        if (!container) return;
+        container.querySelectorAll('.size-btn').forEach(button => {
+            button.addEventListener('click', () => {
+                container.querySelectorAll('.size-btn').forEach(btn => btn.classList.remove('active'));
+                button.classList.add('active');
+                selectedAspectRatio = button.dataset.size;
+            });
+        });
+    };
+    setupSizeButtons(fusionSizeOptions);
+    setupSizeButtons(toyCreatorSizeOptions);
+    setupSizeButtons(idPhotoSizeOptions);
+
+    const setupOptionButtons = (container) => {
+        if (!container) return;
+        container.addEventListener('click', (e) => {
+            if (e.target.classList.contains('option-btn')) {
+                container.querySelectorAll('.option-btn').forEach(btn => btn.classList.remove('selected'));
+                e.target.classList.add('selected');
+            }
+        });
+    };
+    setupOptionButtons(idPhotoBackgroundOptions);
+
+
+    // --- Apply Button Logic ---
+    applyBtn.addEventListener('click', () => {
+        let prompt;
+        let imagesToSend = [];
+        let aspectRatioToSend = selectedAspectRatio; // Use the globally selected aspect ratio
+        
+        switch (activeTool) {
+            case 'restore-old-photo':
+                if (uploadedImagesBase64.length === 0) return showToast("Vui lòng tải ảnh cũ lên.");
+                const restoreDetails = document.getElementById('restore-details-check').checked;
+                const colorize = document.getElementById('colorize-check').checked;
+                const userPrompt = document.getElementById('restore-prompt-input').value.trim();
+                prompt = "Restore this old photo. ";
+                if(restoreDetails) prompt += "Enhance details, remove scratches, and fix damages. ";
+                if(colorize) prompt += "Colorize the photo naturally. ";
+                if(userPrompt) prompt += `Also, consider: ${userPrompt}.`;
+                imagesToSend = uploadedImagesBase64;
+                break;
+            
+            case 'toy-creator':
+                if (uploadedImagesBase64.length === 0) return showToast("Vui lòng tải ảnh tham chiếu.");
+                const characterPrompt = document.getElementById('character-prompt-input').value.trim();
+                const backgroundPrompt = document.getElementById('background-prompt-input').value.trim();
+                let sceneDescription = backgroundPrompt ? `Place this new toy model into this scene: ${backgroundPrompt}.` : `Place this new toy model on a modern designer's desk, next to its professional product packaging.`;
+                prompt = `Transform the character(s) from the images into a 3D toy figurine, preserving their exact features. ${sceneDescription} The model's pose is: ${characterPrompt}.`;
+                imagesToSend = uploadedImagesBase64;
+                break;
+
+            case 'character-fusion':
+                const fusionUserPrompt = fusionPromptInput.value.trim();
+                if (!fusionUserPrompt && uploadedImagesBase64.length === 0) return showToast("Vui lòng nhập mô tả hoặc tải ảnh nhân vật.");
+                prompt = fusionUserPrompt;
+                imagesToSend = uploadedImagesBase64;
+                break;
+
+            case 'change-bg':
+                if (!changeBgMainImage) return showToast("Vui lòng tải ảnh gốc.");
+                const bgPrompt = bgPromptInput.value.trim();
+                const colorSync = bgColorSyncCheck.checked;
+                if (!changeBgRefImage && !bgPrompt) return showToast("Vui lòng tải ảnh nền hoặc nhập mô tả.");
+                
+                if (changeBgRefImage) {
+                    prompt = `Take the main subject from the first image and place it into the background of the second image.`;
+                    if (bgPrompt) prompt += ` Additionally, modify the scene with this description: "${bgPrompt}".`;
+                } else {
+                    prompt = `Take the main subject from the image and place it in a new background described as: "${bgPrompt}".`;
+                }
+                
+                if (colorSync) {
+                    prompt += ` It is crucial to perform color grading to seamlessly blend the subject. Adjust the subject's lighting, shadows, and color tones to perfectly match the new background's environment.`;
+                } else {
+                    prompt += ` Keep the subject's original lighting and color as much as possible.`;
+                }
+                imagesToSend.push(changeBgMainImage);
+                if (changeBgRefImage) imagesToSend.push(changeBgRefImage);
+                break;
+
+            case 'change-outfit':
+                if (!changeOutfitMainImage) return showToast("Vui lòng tải ảnh nhân vật.");
+                const outfitPrompt = outfitPromptInput.value.trim();
+                if (!changeOutfitRefImage && !outfitPrompt) return showToast("Vui lòng tải ảnh trang phục hoặc nhập mô tả.");
+
+                if (changeOutfitRefImage) {
+                    prompt = `Dress the person in the first image with the outfit from the second image.`;
+                    if (outfitPrompt) prompt += ` Then, place them in the following scene: "${outfitPrompt}".`;
+                } else {
+                    prompt = `Change the outfit and background of the person in the image according to this description: "${outfitPrompt}".`;
+                }
+                prompt += ` Keep the original person's face and body features. Create a realistic image.`;
+                imagesToSend.push(changeOutfitMainImage);
+                if (changeOutfitRefImage) imagesToSend.push(changeOutfitRefImage);
+                break;
+
+            case 'id-photo':
+                if (!idPhotoImage) return showToast("Vui lòng tải ảnh chân dung.");
+                const outfitDescription = idPhotoOutfitPrompt.value.trim();
+                const selectedBackground = idPhotoBackgroundOptions.querySelector('.selected').dataset.background;
+                const selectedSizeText = idPhotoSizeOptions.querySelector('.active').textContent;
+                
+                let outfitPromptClause = outfitDescription
+                    ? `Change the current attire to: "${outfitDescription}".`
+                    : 'Keep the original attire.';
+                
+                prompt = `From the provided photo, create a professional ID photo. It is essential to retain the exact face and features of the person. ${outfitPromptClause} Replace the entire background with a solid ${selectedBackground} color. The final image must be a centered, shoulders-up portrait suitable for an ID or passport photo.`;
+                imagesToSend.push(idPhotoImage);
+                break;
+                
+            case 'edit-photo':
+                 if (!editPhotoImage) return showToast("Vui lòng tải ảnh gốc.");
+                 const command = editPhotoCommandInput.value.trim();
+                 if (!command) return showToast("Vui lòng nhập yêu cầu chỉnh sửa.");
+                 
+                 prompt = `You are a professional photo editor. Edit the provided image according to the following request: "${command}". Apply the changes subtly and realistically, preserving the original details of the photo as much as possible.`;
+                 imagesToSend.push(editPhotoImage);
+                 break;
+
+            default:
+                return showToast("Tính năng này chưa được hỗ trợ.", 'info');
+        }
+        generate(prompt, imagesToSend, aspectRatioToSend);
+    });
+
+    // --- Download Button Logic ---
+    downloadBtn.addEventListener('click', () => {
+        if (resultImage.src && !resultImage.classList.contains('hidden')) {
+            const a = document.createElement('a');
+            a.href = resultImage.src;
+            a.download = 'tonerx-ai-image.png';
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+        }
+    });
+    
+    // --- API Call and Result Handling ---
+    async function generate(userPrompt, images = [], aspectRatio = '1:1') {
+        setLoading(true);
+        try {
+            const imageUrl = await callGenerativeApi(userPrompt, images, aspectRatio);
+            resultImage.src = imageUrl;
+            resultImage.classList.remove('hidden');
+            resultPlaceholder.classList.add('hidden');
+            downloadBtn.disabled = false;
+        } catch (error) {
+            console.error("API Error:", error);
+            showToast(`Đã xảy ra lỗi: ${error.message}`);
+            resultPlaceholder.classList.remove('hidden');
+        } finally {
+            setLoading(false);
+        }
+    }
+
+    async function callGenerativeApi(userPrompt, images, aspectRatio) {
+        const apiKey = "";
+        let apiUrl, payload;
+        const styleSuffix = ", masterpiece, best quality, high detail, cinematic lighting, 4k, sharp focus";
+        
+        const shouldUseImagen = (activeTool === 'character-fusion' && images.length === 0);
+
+        if (shouldUseImagen) {
+            apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/imagen-3.0-generate-002:predict?key=${apiKey}`;
+            const finalPrompt = userPrompt + styleSuffix;
+            payload = {
+                instances: [{ prompt: finalPrompt }],
+                parameters: { "sampleCount": 1, "aspectRatio": aspectRatio }
+            };
+        } else {
+            apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-image-preview:generateContent?key=${apiKey}`;
+            let finalPrompt = userPrompt;
+            if (['character-fusion', 'toy-creator', 'id-photo'].includes(activeTool)) {
+                finalPrompt += ` The final image must have a ${aspectRatio.replace(':', ' to ')} aspect ratio.`;
+            }
+            const parts = [{ text: finalPrompt }];
+            images.forEach(imgData => {
+                parts.push({ inlineData: { mimeType: imgData.type, data: imgData.data } });
+            });
+            payload = {
+                contents: [{ parts: parts }],
+                generationConfig: { responseModalities: ['IMAGE'] },
+            };
+        }
+
+        const response = await fetch(apiUrl, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload)
+        });
+
+        if (!response.ok) {
+            const error = await response.json();
+            throw new Error(error.error?.message || 'Yêu cầu API thất bại.');
+        }
+
+        const result = await response.json();
+        const base64Data = shouldUseImagen 
+            ? result.predictions?.[0]?.bytesBase64Encoded
+            : result?.candidates?.[0]?.content?.parts?.find(p => p.inlineData)?.inlineData?.data;
+
+        if (!base64Data) throw new Error('Không nhận được dữ liệu hình ảnh từ API.');
+        
+        return `data:image/png;base64,${base64Data}`;
+    }
+    
+    function setLoading(isLoading) {
+        applyBtn.disabled = isLoading;
+        if(isLoading){
+            loader.classList.remove('hidden');
+            resultPlaceholder.classList.add('hidden');
+            resultImage.classList.add('hidden');
+            downloadBtn.disabled = true;
+            applyBtn.innerText = "Đang xử lý...";
+        } else {
+            loader.classList.add('hidden');
+            applyBtn.innerText = "Áp Dụng Preset";
+        }
+    }
+
+    // Initial UI setup
+    updateWorkspaceUI();
+</script>
+</body>
+</html>
