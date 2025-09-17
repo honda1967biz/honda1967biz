@@ -3,100 +3,92 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Honda1967 AI - Bộ Sưu Tập</title>
+    <title>Trang chủ Honda1967 AI Tools</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
     <style>
         body {
-            font-family: 'Be Vietnam Pro', sans-serif;
-            background-color: #111827; /* gray-900 */
+            font-family: 'Inter', sans-serif;
         }
-        .card {
-            background-color: #1f2937; /* gray-800 */
-            border-radius: 1rem;
-            border: 1px solid #374151; /* gray-700 */
-            transition: all 0.3s ease-in-out;
-            overflow: hidden;
+        .hero-bg {
+            background-color: #0d1117;
+            background-image: radial-gradient(circle at 1px 1px, #30363d 1px, transparent 0);
+            background-size: 20px 20px;
         }
-        .card:hover {
+        .cta-button {
+            background: linear-gradient(to right, #f77825, #d85a00);
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px 0 rgba(247, 120, 37, 0.5);
+        }
+        .cta-button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 7px 20px 0 rgba(247, 120, 37, 0.4);
+        }
+        .feature-card {
+            background-color: #161b22;
+            border: 1px solid #30363d;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        .feature-card:hover {
             transform: translateY(-5px);
-            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.2), 0 10px 10px -5px rgba(0, 0, 0, 0.1);
-            border-color: #4f46e5; /* indigo-600 */
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
         }
-        .card-button {
-            background-color: #4f46e5; /* indigo-600 */
-            transition: background-color 0.3s ease;
-        }
-        .card-button:hover {
-            background-color: #4338ca; /* indigo-700 */
-        }
-        .card-title {
-             background: linear-gradient(to right, #a78bfa, #818cf8);
+        .feature-icon {
+            background: linear-gradient(to right, #f77825, #d85a00);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
         }
     </style>
 </head>
-<body class="text-gray-200">
-    <div class="container mx-auto px-4 py-12">
-        <header class="text-center mb-12">
-            <h1 class="text-5xl font-extrabold text-white">Honda1967 <span class="text-transparent bg-clip-text bg-gradient-to-r from-violet-500 to-indigo-500">AI Suite</span></h1>
-            <p class="text-gray-400 mt-4 text-lg max-w-2xl mx-auto">Tất cả các công cụ AI sáng tạo được tổng hợp tại một nơi duy nhất.</p>
-        </header>
+<body class="bg-gray-900 text-white">
 
-        <main class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-            
-            <!-- Card 1: Honda1967 AI TOOL -->
-            <div class="card flex flex-col">
-                <div class="p-6 flex-grow">
-                    <h2 class="text-2xl font-bold mb-2 card-title">Honda1967 AI TOOLS</h2>
-                    <p class="text-gray-400 text-sm">Bộ công cụ chỉnh sửa ảnh đa năng, mạnh mẽ với nhiều tính năng chuyên nghiệp.</p>
-                </div>
-                <div class="p-6 bg-gray-900/50">
-                     <a href="https://g.co/gemini/share/c172d0ef8a43" target="_blank" class="card-button block w-full text-center text-white font-semibold py-3 px-4 rounded-lg">Mở Công Cụ</a>
-                </div>
-            </div>
-
-            <!-- Card 2: Chỉnh sửa nhân vật Audition -->
-            <div class="card flex flex-col">
-                <div class="p-6 flex-grow">
-                    <h2 class="text-2xl font-bold mb-2 card-title">Chỉnh sửa Audition</h2>
-                    <p class="text-gray-400 text-sm">Biến hóa và tạo ra các nhân vật trong game Audition theo phong cách độc đáo của riêng bạn.</p>
-                </div>
-                 <div class="p-6 bg-gray-900/50">
-                     <a href="https://g.co/gemini/share/18b5ce9a325c" target="_blank" class="card-button block w-full text-center text-white font-semibold py-3 px-4 rounded-lg">Mở Ứng Dụng</a>
-                </div>
-            </div>
-
-            <!-- Card 3: Biến ảnh có sẵn thành hình xăm -->
-            <div class="card flex flex-col">
-                <div class="p-6 flex-grow">
-                    <h2 class="text-2xl font-bold mb-2 card-title">Thiết Kế Hình Xăm</h2>
-                    <p class="text-gray-400 text-sm">Chuyển mọi hình ảnh tham chiếu thành các thiết kế hình xăm nghệ thuật và độc đáo.</p>
-                </div>
-                 <div class="p-6 bg-gray-900/50">
-                     <a href="https://g.co/gemini/share/83f26ca5ddb3" target="_blank" class="card-button block w-full text-center text-white font-semibold py-3 px-4 rounded-lg">Mở Ứng Dụng</a>
-                </div>
-            </div>
-
-            <!-- Card 4: Biến ảnh thành phong cách hoạt hình -->
-            <div class="card flex flex-col">
-                <div class="p-6 flex-grow">
-                    <h2 class="text-2xl font-bold mb-2 card-title">Hoạt Hình Hóa Ảnh</h2>
-                    <p class="text-gray-400 text-sm">Áp dụng các phong cách anime và hoạt hình nổi tiếng vào bức ảnh của bạn một cách dễ dàng.</p>
-                </div>
-                 <div class="p-6 bg-gray-900/50">
-                     <a href="https://g.co/gemini/share/321f87da0ed5" target="_blank" class="card-button block w-full text-center text-white font-semibold py-3 px-4 rounded-lg">Mở Ứng Dụng</a>
-                </div>
-            </div>
-
-        </main>
-        
-        <footer class="text-center mt-12">
-            <p class="text-gray-500 text-sm">Tạo bởi Minh Phương & Gemini dễ thương</p>
-        </footer>
+    <div class="hero-bg">
+        <div class="container mx-auto px-6 py-24 text-center">
+            <h1 class="text-4xl md:text-6xl font-bold text-white leading-tight">
+                Bộ Công Cụ Sáng Tạo <span class="text-orange-400">Honda1967 AI</span>
+            </h1>
+            <p class="text-lg md:text-xl text-gray-300 mt-4 max-w-2xl mx-auto">
+                Chào mừng bạn đến với bộ công cụ sáng tạo hình ảnh toàn diện, nơi mọi ý tưởng đều có thể trở thành hiện thực chỉ với vài cú nhấp chuột.
+            </p>
+            <a href="https://g.co/gemini/share/3dedda15274d" target="_blank" class="cta-button inline-block text-white font-bold text-lg px-10 py-4 rounded-full mt-10 shadow-lg">
+                <i class="fa-solid fa-rocket mr-2"></i>
+                Bắt Đầu Sáng Tạo Ngay
+            </a>
+        </div>
     </div>
+
+    <div class="py-20 px-6 bg-gray-900">
+        <div class="container mx-auto">
+            <h2 class="text-3xl font-bold text-center text-white mb-12">Các Công Cụ Nổi Bật</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                <!-- Feature 1 -->
+                <div class="feature-card p-8 rounded-lg">
+                    <i class="fa-solid fa-wand-magic-sparkles fa-3x mb-4 feature-icon"></i>
+                    <h3 class="text-xl font-bold mb-2">Sửa Mô Hình & Trend</h3>
+                    <p class="text-gray-400">Biến ảnh của bạn theo các phong cách độc đáo hoặc tạo ra các mô hình Audition sống động.</p>
+                </div>
+                <!-- Feature 2 -->
+                <div class="feature-card p-8 rounded-lg">
+                    <i class="fa-solid fa-camera-retro fa-3x mb-4 feature-icon"></i>
+                    <h3 class="text-xl font-bold mb-2">Phục Hồi & Chỉnh Sửa</h3>
+                    <p class="text-gray-400">Phục chế ảnh cũ, chỉnh sửa đường nét, làm sạch phông nền, thay đổi ánh sáng chuyên nghiệp.</p>
+                </div>
+                <!-- Feature 3 -->
+                <div class="feature-card p-8 rounded-lg">
+                    <i class="fa-solid fa-pen-nib fa-3x mb-4 feature-icon"></i>
+                    <h3 class="text-xl font-bold mb-2">Thiết Kế & Hóa Thân</h3>
+                    <p class="text-gray-400">Tạo thiết kế hình xăm độc đáo hoặc biến mình thành nhân vật hoạt hình yêu thích.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer class="bg-gray-950 py-6">
+        <div class="container mx-auto text-center text-gray-500">
+            <p>&copy; 2024 Honda1967 & Kem AI. Hợp tác sáng tạo.</p>
+        </div>
+    </footer>
+
 </body>
 </html>
